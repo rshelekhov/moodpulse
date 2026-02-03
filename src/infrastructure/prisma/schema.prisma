@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(uuid())
+
+  telegramId   BigInt @unique
+  username     String?
+  firstName    String?
+  lastName     String?
+  languageCode String?
+
+  timezone String @default("Europe/Moscow")
+  reminderEnabled Boolean @default(true)
+  reminderTime    String  @default("21:00")
+  takingMedications Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  checkins Checkin[]
+}
+
+model Checkin {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Mood scale from -3 (depressed) to +3 (hypomania)
+  // 0 is neutral
+  mood Int
+
+  // Energy scale from 1 (low energy) to 5 (high energy)
+  energy Int
+
+  // Sleep duration in hours
+  sleepDuration Float
+  sleepQuality  SleepQuality
+
+  // Anxiety level from 0 (no anxiety) to 3 (extreme anxiety)
+  anxiety Int
+
+  // Irritability level from 0 (not irritable) to 3 (extremely irritable)
+  irritability Int
+
+  medicationTaken MedicationStatus
+
+  note String?
+
+  createdAt DateTime @default(now())
+
+  // The date for which the check-in is recorded (without time component)
+  date DateTime @db.Date
+
+  @@unique([userId, date])
+  @@index([userId, createdAt])
+}
+
+enum SleepQuality {
+  POOR
+  FAIR
+  GOOD
+}
+
+enum MedicationStatus {
+  TAKEN
+  SKIPPED
+  NOT_APPLICABLE
+}
