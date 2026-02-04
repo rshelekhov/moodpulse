@@ -3,6 +3,7 @@ import { Bot, GrammyError, HttpError } from "grammy";
 import { getConfig } from "../config/config";
 import { normalizeLocale, t } from "../lib/i18n";
 import { createChildLogger } from "../lib/logger";
+import { setBotCommands } from "./commands/definitions";
 import { handleStartCommand } from "./commands/start";
 
 const logger = createChildLogger("bot");
@@ -15,6 +16,8 @@ export function createBot(): Bot {
 	const bot = new Bot(config.BOT_TOKEN);
 
 	bot.command("start", handleStartCommand);
+
+	setBotCommands(bot);
 
 	// Error-handling middleware (covers all updates passing through middlewares)
 	bot.use(async (ctx, next) => {
