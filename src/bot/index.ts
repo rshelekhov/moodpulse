@@ -1,21 +1,36 @@
+import { conversations, createConversation } from "@grammyjs/conversations";
 import type { BotError } from "grammy";
-import { Bot, GrammyError, HttpError } from "grammy";
+import { Bot, GrammyError, HttpError, session } from "grammy";
 import { getConfig } from "../config/config";
 import { normalizeLocale, t } from "../lib/i18n";
 import { createChildLogger } from "../lib/logger";
+import { handleCheckinCommand } from "./commands/checkin";
 import { setBotCommands } from "./commands/definitions";
 import { handleStartCommand } from "./commands/start";
+import type { BotContext, SessionData } from "./context";
+import { checkinConversation } from "./conversations/checkin";
 
 const logger = createChildLogger("bot");
 
-export function createBot(): Bot {
+export function createBot(): Bot<BotContext> {
 	const config = getConfig();
 
 	logger.debug("Creating bot instance");
 
-	const bot = new Bot(config.BOT_TOKEN);
+	const bot = new Bot<BotContext>(config.BOT_TOKEN);
+
+	bot.use(
+		session({
+			initial: (): SessionData => ({}),
+		}),
+	);
+
+	bot.use(conversations());
+
+	bot.use(createConversation(checkinConversation, "checkin"));
 
 	bot.command("start", handleStartCommand);
+	bot.command("checkin", handleCheckinCommand);
 
 	setBotCommands(bot);
 
@@ -56,14 +71,22 @@ export function createBot(): Bot {
 	});
 
 	// Last-resort error handler for anything not caught by middleware
-	bot.catch((err: BotError) => {
+	bot.catch((err: BotError<BotContext>) => {
 		const ctx = err.ctx;
 		const updateId = ctx.update?.update_id;
 		const e = err.error;
-		logger.error({ updateId, error: e }, "Unhandled bot error");
+
+		logger.error(
+			{
+				updateId,
+				errorMessage: e instanceof Error ? e.message : String(e),
+				errorStack: e instanceof Error ? e.stack : undefined,
+			},
+			"Unhandled bot error",
+		);
 	});
 
 	return bot;
 }
 
-export type BotInstance = Bot;
+export type BotInstance = Bot<BotContext>;

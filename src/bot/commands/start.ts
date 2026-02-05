@@ -1,11 +1,11 @@
-import type { Context } from "grammy";
 import { normalizeLocale, t } from "../../lib/i18n";
 import { createChildLogger } from "../../lib/logger";
 import { createOrUpdateUserFromTelegram } from "../../services/user.service";
+import type { BotContext } from "../context";
 
 const logger = createChildLogger("bot.start");
 
-export async function handleStartCommand(ctx: Context) {
+export async function handleStartCommand(ctx: BotContext) {
 	logger.info({ userId: ctx.from?.id }, "User started the bot");
 
 	if (ctx.from) {
