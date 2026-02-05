@@ -1,9 +1,6 @@
 import { createBot } from "./bot";
 import { loadConfig } from "./config/config";
-import {
-	connectDatabase,
-	disconnectDatabase,
-} from "./infrastructure/database";
+import { connectDatabase, disconnectDatabase } from "./infrastructure/database";
 import { logger } from "./lib/logger";
 
 async function main(): Promise<void> {
