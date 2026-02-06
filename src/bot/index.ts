@@ -7,6 +7,7 @@ import { createChildLogger } from "../lib/logger";
 import { handleCheckinCommand } from "./commands/checkin";
 import { setBotCommands } from "./commands/definitions";
 import { handleStartCommand } from "./commands/start";
+import { handleTodayCommand, handleTodayStartCheckin } from "./commands/today";
 import type { BotContext, SessionData } from "./context";
 import { checkinConversation } from "./conversations/checkin";
 
@@ -67,6 +68,9 @@ export function createBot(): Bot<BotContext> {
 
 	bot.command("start", handleStartCommand);
 	bot.command("checkin", handleCheckinCommand);
+	bot.command("today", handleTodayCommand);
+
+	bot.callbackQuery("today:start_checkin", handleTodayStartCheckin);
 
 	setBotCommands(bot);
 

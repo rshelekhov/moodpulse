@@ -8,11 +8,13 @@ const logger = createChildLogger("bot:commands");
 const commands: BotCommand[] = [
 	{ command: "start", description: "Start interacting with the bot" },
 	{ command: "checkin", description: "Record daily check-in" },
+	{ command: "today", description: "Show today's check-in" },
 ];
 
 const commandsRu: BotCommand[] = [
 	{ command: "start", description: "Начать работу с ботом" },
 	{ command: "checkin", description: "Записать ежедневный чек-ин" },
+	{ command: "today", description: "Показать чек-ин за сегодня" },
 ];
 
 export async function setBotCommands(bot: Bot<BotContext>): Promise<void> {

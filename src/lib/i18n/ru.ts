@@ -221,4 +221,37 @@ export const ru = {
 		};
 		return labels[value] ?? value;
 	},
+	// ===== TODAY: Show today's check-in =====
+	today_checkin: ({
+		mood,
+		energy,
+		sleepHours,
+		sleepQuality,
+		anxiety,
+		irritability,
+		medication,
+		note,
+	}: {
+		mood: string;
+		energy: string;
+		sleepHours: string;
+		sleepQuality: string;
+		anxiety: string;
+		irritability: string;
+		medication: string;
+		note: string | null;
+	}) =>
+		`Твой чек-ин за сегодня:\n\n` +
+		`Настроение: ${mood}\n` +
+		`Энергия: ${energy}\n` +
+		`Сон: ${sleepHours}ч (${sleepQuality})\n` +
+		`Тревога: ${anxiety}\n` +
+		`Раздражительность: ${irritability}\n` +
+		`Лекарства: ${medication}` +
+		`${note ? `\nЗаметка: ${note}` : ""}`,
+
+	today_no_checkin: (_: Record<string, never>) =>
+		"Сегодня ещё нет чек-ина. Хочешь записать?",
+
+	today_btn_checkin: (_: Record<string, never>) => "Записать чек-ин",
 } as const;

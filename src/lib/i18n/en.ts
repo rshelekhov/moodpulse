@@ -220,4 +220,37 @@ export const en = {
 		};
 		return labels[value] ?? value;
 	},
+	// ===== TODAY: Show today's check-in =====
+	today_checkin: ({
+		mood,
+		energy,
+		sleepHours,
+		sleepQuality,
+		anxiety,
+		irritability,
+		medication,
+		note,
+	}: {
+		mood: string;
+		energy: string;
+		sleepHours: string;
+		sleepQuality: string;
+		anxiety: string;
+		irritability: string;
+		medication: string;
+		note: string | null;
+	}) =>
+		`Your check-in for today:\n\n` +
+		`Mood: ${mood}\n` +
+		`Energy: ${energy}\n` +
+		`Sleep: ${sleepHours}h (${sleepQuality})\n` +
+		`Anxiety: ${anxiety}\n` +
+		`Irritability: ${irritability}\n` +
+		`Medication: ${medication}` +
+		`${note ? `\nNote: ${note}` : ""}`,
+
+	today_no_checkin: (_: Record<string, never>) =>
+		"No check-in recorded today yet. Would you like to log one?",
+
+	today_btn_checkin: (_: Record<string, never>) => "Record check-in",
 } as const;
