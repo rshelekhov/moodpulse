@@ -29,11 +29,6 @@ export function createBot(): Bot<BotContext> {
 
 	bot.use(createConversation(checkinConversation, "checkin"));
 
-	bot.command("start", handleStartCommand);
-	bot.command("checkin", handleCheckinCommand);
-
-	setBotCommands(bot);
-
 	// Error-handling middleware (covers all updates passing through middlewares)
 	bot.use(async (ctx, next) => {
 		try {
@@ -69,6 +64,11 @@ export function createBot(): Bot<BotContext> {
 			}
 		}
 	});
+
+	bot.command("start", handleStartCommand);
+	bot.command("checkin", handleCheckinCommand);
+
+	setBotCommands(bot);
 
 	// Last-resort error handler for anything not caught by middleware
 	bot.catch((err: BotError<BotContext>) => {

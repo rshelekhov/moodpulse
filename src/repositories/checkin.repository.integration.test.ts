@@ -10,9 +10,9 @@ import {
 import { prisma } from "../infrastructure/database";
 import {
 	createCheckin,
-	findCheckinByUserIdAndDate,
+	findCheckinByUserIdAndLocalDate,
 	findUserByTelegramId,
-	updateCheckinById,
+	updateCheckinByIdForUser,
 } from "./checkin.repository";
 
 const TEST_TELEGRAM_ID = BigInt(999999999);
@@ -59,10 +59,15 @@ async function cleanupTestData() {
 	});
 }
 
-function getTodayMidnight(): Date {
+function getTodayLocalDate(): string {
+	return new Date().toISOString().slice(0, 10);
+}
+
+function getYesterdayLocalDate(): string {
 	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	return today;
+	const yesterday = new Date(today);
+	yesterday.setDate(today.getDate() - 1);
+	return yesterday.toISOString().slice(0, 10);
 }
 
 describe("checkin.repository integration", () => {
@@ -84,7 +89,7 @@ describe("checkin.repository integration", () => {
 
 	describe("createCheckin", () => {
 		test("creates checkin with all fields", async () => {
-			const today = getTodayMidnight();
+			const localDate = getTodayLocalDate();
 			const checkinData = {
 				userId: testUserId!,
 				mood: -1,
@@ -95,7 +100,7 @@ describe("checkin.repository integration", () => {
 				irritability: 1,
 				medicationTaken: "TAKEN" as const,
 				note: "Integration test note",
-				date: today,
+				localDate,
 			};
 
 			const checkin = await createCheckin(checkinData);
@@ -111,6 +116,7 @@ describe("checkin.repository integration", () => {
 			expect(checkin.irritability).toBe(1);
 			expect(checkin.medicationTaken).toBe("TAKEN");
 			expect(checkin.note).toBe("Integration test note");
+			expect(checkin.localDate).toBe(localDate);
 		});
 
 		test("creates checkin with null note", async () => {
@@ -124,7 +130,7 @@ describe("checkin.repository integration", () => {
 				irritability: 0,
 				medicationTaken: "NOT_APPLICABLE" as const,
 				note: null,
-				date: getTodayMidnight(),
+				localDate: getTodayLocalDate(),
 			};
 
 			const checkin = await createCheckin(checkinData);
@@ -133,8 +139,8 @@ describe("checkin.repository integration", () => {
 			expect(checkin.note).toBeNull();
 		});
 
-		test("enforces unique constraint on userId + date", async () => {
-			const today = getTodayMidnight();
+		test("enforces unique constraint on userId + localDate", async () => {
+			const localDate = getTodayLocalDate();
 			const checkin1 = await createCheckin({
 				userId: testUserId!,
 				mood: 0,
@@ -144,7 +150,7 @@ describe("checkin.repository integration", () => {
 				anxiety: 0,
 				irritability: 0,
 				medicationTaken: "TAKEN" as const,
-				date: today,
+				localDate,
 			});
 			testCheckinIds.push(checkin1.id);
 
@@ -158,15 +164,15 @@ describe("checkin.repository integration", () => {
 					anxiety: 0,
 					irritability: 0,
 					medicationTaken: "TAKEN" as const,
-					date: today,
+					localDate,
 				}),
 			).rejects.toThrow();
 		});
 	});
 
-	describe("findCheckinByUserIdAndDate", () => {
+	describe("findCheckinByUserIdAndLocalDate", () => {
 		test("returns checkin when exists", async () => {
-			const today = getTodayMidnight();
+			const localDate = getTodayLocalDate();
 			const created = await createCheckin({
 				userId: testUserId!,
 				mood: 2,
@@ -176,19 +182,22 @@ describe("checkin.repository integration", () => {
 				anxiety: 0,
 				irritability: 0,
 				medicationTaken: "SKIPPED" as const,
-				date: today,
+				localDate,
 			});
 			testCheckinIds.push(created.id);
 
-			const found = await findCheckinByUserIdAndDate(testUserId!, today);
+			const found = await findCheckinByUserIdAndLocalDate(
+				testUserId!,
+				localDate,
+			);
 
 			expect(found).not.toBeNull();
 			expect(found?.id).toBe(created.id);
 			expect(found?.mood).toBe(2);
 		});
 
-		test("returns null when no checkin for that date", async () => {
-			const today = getTodayMidnight();
+		test("returns null when no checkin for that localDate", async () => {
+			const localDate = getTodayLocalDate();
 			const created = await createCheckin({
 				userId: testUserId!,
 				mood: 0,
@@ -198,29 +207,31 @@ describe("checkin.repository integration", () => {
 				anxiety: 1,
 				irritability: 1,
 				medicationTaken: "TAKEN" as const,
-				date: today,
+				localDate,
 			});
 			testCheckinIds.push(created.id);
 
-			const yesterday = new Date(today);
-			yesterday.setDate(yesterday.getDate() - 1);
-			const found = await findCheckinByUserIdAndDate(testUserId!, yesterday);
+			const found = await findCheckinByUserIdAndLocalDate(
+				testUserId!,
+				getYesterdayLocalDate(),
+			);
 
 			expect(found).toBeNull();
 		});
 
 		test("returns null when no checkin for that user", async () => {
-			const found = await findCheckinByUserIdAndDate(
+			const found = await findCheckinByUserIdAndLocalDate(
 				"non-existent-user-id",
-				getTodayMidnight(),
+				getTodayLocalDate(),
 			);
 
 			expect(found).toBeNull();
 		});
 	});
 
-	describe("updateCheckinById", () => {
+	describe("updateCheckinByIdForUser", () => {
 		test("updates specified fields only", async () => {
+			const localDate = getTodayLocalDate();
 			const checkin = await createCheckin({
 				userId: testUserId!,
 				mood: 0,
@@ -231,22 +242,32 @@ describe("checkin.repository integration", () => {
 				irritability: 1,
 				medicationTaken: "TAKEN" as const,
 				note: "Original note",
-				date: getTodayMidnight(),
+				localDate,
 			});
 			testCheckinIds.push(checkin.id);
 
-			const updated = await updateCheckinById(checkin.id, {
-				mood: 2,
-				note: "Updated note",
-			});
+			const updateResult = await updateCheckinByIdForUser(
+				checkin.id,
+				testUserId!,
+				{
+					mood: 2,
+					note: "Updated note",
+				},
+			);
 
-			expect(updated.mood).toBe(2);
-			expect(updated.note).toBe("Updated note");
-			expect(updated.energy).toBe(3);
-			expect(updated.sleepQuality).toBe("FAIR");
+			expect(updateResult.count).toBe(1);
+			const updated = await findCheckinByUserIdAndLocalDate(
+				testUserId!,
+				localDate,
+			);
+			expect(updated?.mood).toBe(2);
+			expect(updated?.note).toBe("Updated note");
+			expect(updated?.energy).toBe(3);
+			expect(updated?.sleepQuality).toBe("FAIR");
 		});
 
 		test("can update note to null", async () => {
+			const localDate = getTodayLocalDate();
 			const checkin = await createCheckin({
 				userId: testUserId!,
 				mood: 0,
@@ -257,13 +278,21 @@ describe("checkin.repository integration", () => {
 				irritability: 0,
 				medicationTaken: "TAKEN" as const,
 				note: "Has a note",
-				date: getTodayMidnight(),
+				localDate,
 			});
 			testCheckinIds.push(checkin.id);
 
-			const updated = await updateCheckinById(checkin.id, { note: null });
-
-			expect(updated.note).toBeNull();
+			const updateResult = await updateCheckinByIdForUser(
+				checkin.id,
+				testUserId!,
+				{ note: null },
+			);
+			expect(updateResult.count).toBe(1);
+			const updated = await findCheckinByUserIdAndLocalDate(
+				testUserId!,
+				localDate,
+			);
+			expect(updated?.note).toBeNull();
 		});
 	});
 });

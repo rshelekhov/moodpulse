@@ -11,17 +11,20 @@ export type CreateCheckinInput = {
 	irritability: number;
 	medicationTaken: MedicationStatus;
 	note?: string | null;
-	date: Date;
+	localDate: string;
 };
 
 export type UpdateCheckinInput = Partial<
-	Omit<CreateCheckinInput, "userId" | "date">
+	Omit<CreateCheckinInput, "userId" | "localDate">
 >;
 
-export async function findCheckinByUserIdAndDate(userId: string, date: Date) {
+export async function findCheckinByUserIdAndLocalDate(
+	userId: string,
+	localDate: string,
+) {
 	return prisma.checkin.findUnique({
 		where: {
-			userId_date: { userId, date },
+			userId_localDate: { userId, localDate },
 		},
 	});
 }
@@ -38,14 +41,18 @@ export async function createCheckin(input: CreateCheckinInput) {
 			irritability: input.irritability,
 			medicationTaken: input.medicationTaken,
 			note: input.note ?? null,
-			date: input.date,
+			localDate: input.localDate,
 		},
 	});
 }
 
-export async function updateCheckinById(id: string, data: UpdateCheckinInput) {
-	return prisma.checkin.update({
-		where: { id },
+export async function updateCheckinByIdForUser(
+	id: string,
+	userId: string,
+	data: UpdateCheckinInput,
+) {
+	return prisma.checkin.updateMany({
+		where: { id, userId },
 		data,
 	});
 }

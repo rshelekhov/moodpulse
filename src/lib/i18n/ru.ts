@@ -38,6 +38,10 @@ export const ru = {
 
 	checkin_btn_record_new: (_: Record<string, never>) => "Записать новый",
 	checkin_btn_keep_current: (_: Record<string, never>) => "Оставить как есть",
+	checkin_private_only: (_: Record<string, never>) =>
+		"Эта команда работает только в личном чате со мной.",
+	checkin_already_active: (_: Record<string, never>) =>
+		"У тебя уже есть активный чек-ин. Заверши его или нажми «Отмена».",
 
 	// ===== CHECKIN: Questions =====
 	checkin_q_mood: (_: Record<string, never>) =>
@@ -60,7 +64,9 @@ export const ru = {
 		`Хочешь добавить заметку?\n\n` +
 		`Можешь записать контекст, события дня, триггеры — всё, что считаешь важным.`,
 	checkin_q_note_prompt: (_: Record<string, never>) =>
-		"Напиши заметку текстом.",
+		"Напиши заметку текстом или нажми «Пропустить/Отмена».",
+	checkin_note_too_long: ({ limit }: { limit: number }) =>
+		`Заметка слишком длинная (макс. ${limit} символов). Сократи, пожалуйста.`,
 
 	// ===== CHECKIN: Mood buttons =====
 	checkin_mood_m3: (_: Record<string, never>) => "−3 депрессия",

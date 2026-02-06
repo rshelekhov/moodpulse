@@ -46,3 +46,11 @@ export function getConfig(): Config {
 export function isProd(): boolean {
 	return getConfig().NODE_ENV === "production";
 }
+
+const checkinConfig = {
+	noteMaxLength: 500,
+} as const;
+
+export function getCheckinConfig() {
+	return checkinConfig;
+}

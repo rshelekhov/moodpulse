@@ -35,7 +35,7 @@ CREATE TABLE "Checkin" (
     "medicationTaken" "MedicationStatus" NOT NULL,
     "note" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "date" DATE NOT NULL,
+    "localDate" TEXT NOT NULL,
 
     CONSTRAINT "Checkin_pkey" PRIMARY KEY ("id")
 );
@@ -47,7 +47,7 @@ CREATE UNIQUE INDEX "User_telegramId_key" ON "User"("telegramId");
 CREATE INDEX "Checkin_userId_createdAt_idx" ON "Checkin"("userId", "createdAt");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Checkin_userId_date_key" ON "Checkin"("userId", "date");
+CREATE UNIQUE INDEX "Checkin_userId_localDate_key" ON "Checkin"("userId", "localDate");
 
 -- AddForeignKey
 ALTER TABLE "Checkin" ADD CONSTRAINT "Checkin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -55,10 +55,10 @@ model Checkin {
 
   createdAt DateTime @default(now())
 
-  // The date for which the check-in is recorded (without time component)
-  date DateTime @db.Date
+  // Local date (YYYY-MM-DD) in the user's timezone
+  localDate String
 
-  @@unique([userId, date])
+  @@unique([userId, localDate])
   @@index([userId, createdAt])
 }
 

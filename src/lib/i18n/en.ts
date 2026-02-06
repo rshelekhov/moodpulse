@@ -38,6 +38,10 @@ export const en = {
 
 	checkin_btn_record_new: (_: Record<string, never>) => "Record new",
 	checkin_btn_keep_current: (_: Record<string, never>) => "Keep current",
+	checkin_private_only: (_: Record<string, never>) =>
+		"Please use this command in a private chat with me.",
+	checkin_already_active: (_: Record<string, never>) =>
+		"You already have a check-in in progress. Please finish it or tap Cancel.",
 
 	// ===== CHECKIN: Questions =====
 	checkin_q_mood: (_: Record<string, never>) =>
@@ -59,7 +63,10 @@ export const en = {
 	checkin_q_note: (_: Record<string, never>) =>
 		`Would you like to add a note?\n\n` +
 		`You can record context, events of the day, triggers — anything you find relevant.`,
-	checkin_q_note_prompt: (_: Record<string, never>) => "Type your note.",
+	checkin_q_note_prompt: (_: Record<string, never>) =>
+		"Type your note, or tap Skip/Cancel.",
+	checkin_note_too_long: ({ limit }: { limit: number }) =>
+		`That note is too long (max ${limit} characters). Please shorten it.`,
 
 	// ===== CHECKIN: Mood buttons =====
 	checkin_mood_m3: (_: Record<string, never>) => "−3 depression",

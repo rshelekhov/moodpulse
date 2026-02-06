@@ -1,9 +1,10 @@
 import type { MedicationStatus, SleepQuality } from "@prisma/client";
+import { getLocalDateKey } from "../lib/date";
 import {
 	createCheckin,
-	findCheckinByUserIdAndDate,
+	findCheckinByUserIdAndLocalDate,
 	findUserByTelegramId,
-	updateCheckinById,
+	updateCheckinByIdForUser,
 } from "../repositories/checkin.repository";
 
 export type CheckinData = {
@@ -17,25 +18,22 @@ export type CheckinData = {
 	note?: string | null;
 };
 
-export async function getTodayCheckin(telegramId: number) {
+export async function getTodayCheckin(telegramId: number, now = new Date()) {
 	const user = await findUserByTelegramId(BigInt(telegramId));
 
 	if (!user) {
 		return null;
 	}
 
-	// Create a Date object for "today" at midnight (00:00:00.000)
-	// This is important because the database stores only the date part
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-
-	return findCheckinByUserIdAndDate(user.id, today);
+	const localDate = getLocalDateKey(now, user.timezone);
+	return findCheckinByUserIdAndLocalDate(user.id, localDate);
 }
 
 export async function saveCheckin(
 	telegramId: number,
 	data: CheckinData,
 	existingCheckinId?: string,
+	now = new Date(),
 ) {
 	const user = await findUserByTelegramId(BigInt(telegramId));
 
@@ -43,11 +41,10 @@ export async function saveCheckin(
 		throw new Error("User not found");
 	}
 
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
+	const localDate = getLocalDateKey(now, user.timezone);
 
 	if (existingCheckinId) {
-		return updateCheckinById(existingCheckinId, {
+		const result = await updateCheckinByIdForUser(existingCheckinId, user.id, {
 			mood: data.mood,
 			energy: data.energy,
 			sleepDuration: data.sleepDuration,
@@ -57,6 +54,12 @@ export async function saveCheckin(
 			medicationTaken: data.medicationTaken,
 			note: data.note,
 		});
+
+		if (result.count === 0) {
+			throw new Error("Checkin not found for user");
+		}
+
+		return result;
 	}
 
 	return createCheckin({
@@ -69,6 +72,6 @@ export async function saveCheckin(
 		irritability: data.irritability,
 		medicationTaken: data.medicationTaken,
 		note: data.note,
-		date: today,
+		localDate,
 	});
 }
