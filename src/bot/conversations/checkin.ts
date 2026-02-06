@@ -38,6 +38,7 @@ type CheckinState = {
 export async function checkinConversation(
 	conversation: BotConversation,
 	ctx: ConversationContext,
+	targetDate?: string,
 ): Promise<void> {
 	const telegramId = ctx.from?.id;
 	if (!telegramId) {
@@ -55,7 +56,7 @@ export async function checkinConversation(
 	const state: CheckinState = {};
 
 	await conversation.external(async () => {
-		logger.info({ telegramId }, "Checkin conversation started");
+		logger.info({ telegramId, targetDate }, "Checkin conversation started");
 		await createOrUpdateUserFromTelegram({
 			telegramId,
 			username: ctx.from?.username,
@@ -67,7 +68,7 @@ export async function checkinConversation(
 	});
 
 	const existingCheckin = await conversation.external(() =>
-		getTodayCheckin(telegramId),
+		getTodayCheckin(telegramId, new Date(), targetDate),
 	);
 
 	if (existingCheckin) {
@@ -156,7 +157,13 @@ export async function checkinConversation(
 	}
 
 	await conversation.external(() =>
-		saveCheckin(telegramId, state as CheckinData, state.existingCheckinId),
+		saveCheckin(
+			telegramId,
+			state as CheckinData,
+			state.existingCheckinId,
+			new Date(),
+			targetDate,
+		),
 	);
 
 	await ctx.reply(t("checkin_saved", locale, {}));

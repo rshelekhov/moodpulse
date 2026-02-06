@@ -1,5 +1,5 @@
-import { createChildLogger } from "../../lib/logger";
 import { normalizeLocale, t } from "../../lib/i18n";
+import { createChildLogger } from "../../lib/logger";
 import type { BotContext } from "../context";
 
 const logger = createChildLogger("bot.checkin");

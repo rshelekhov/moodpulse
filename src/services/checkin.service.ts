@@ -18,14 +18,18 @@ export type CheckinData = {
 	note?: string | null;
 };
 
-export async function getTodayCheckin(telegramId: number, now = new Date()) {
+export async function getTodayCheckin(
+	telegramId: number,
+	now = new Date(),
+	targetDate?: string,
+) {
 	const user = await findUserByTelegramId(BigInt(telegramId));
 
 	if (!user) {
 		return null;
 	}
 
-	const localDate = getLocalDateKey(now, user.timezone);
+	const localDate = targetDate ?? getLocalDateKey(now, user.timezone);
 	return findCheckinByUserIdAndLocalDate(user.id, localDate);
 }
 
@@ -34,6 +38,7 @@ export async function saveCheckin(
 	data: CheckinData,
 	existingCheckinId?: string,
 	now = new Date(),
+	targetDate?: string,
 ) {
 	const user = await findUserByTelegramId(BigInt(telegramId));
 
@@ -41,7 +46,7 @@ export async function saveCheckin(
 		throw new Error("User not found");
 	}
 
-	const localDate = getLocalDateKey(now, user.timezone);
+	const localDate = targetDate ?? getLocalDateKey(now, user.timezone);
 
 	if (existingCheckinId) {
 		const result = await updateCheckinByIdForUser(existingCheckinId, user.id, {

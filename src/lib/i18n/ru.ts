@@ -254,4 +254,149 @@ export const ru = {
 		"Сегодня ещё нет чек-ина. Хочешь записать?",
 
 	today_btn_checkin: (_: Record<string, never>) => "Записать чек-ин",
+
+	// ===== TREND =====
+	trend_rising: (_: Record<string, never>) => "↗ растёт",
+	trend_falling: (_: Record<string, never>) => "↘ снижается",
+	trend_stable: (_: Record<string, never>) => "→ стабильно",
+	trend_insufficient: (_: Record<string, never>) => "— мало данных",
+
+	// ===== HISTORY =====
+	history_title: (_: Record<string, never>) => "📋 История чек-инов",
+	history_empty: (_: Record<string, never>) =>
+		"Пока нет записей. Сделай первый чек-ин командой /checkin",
+	history_entry: ({
+		date,
+		mood,
+		energy,
+		sleepHours,
+		anxiety,
+		irritability,
+		medication,
+		note,
+	}: {
+		date: string;
+		mood: string;
+		energy: string;
+		sleepHours: string;
+		anxiety: string;
+		irritability: string;
+		medication: string;
+		note: string | null;
+	}) =>
+		`📅 ${date}\n` +
+		`Настроение: ${mood}\n` +
+		`Энергия: ${energy}\n` +
+		`Сон: ${sleepHours}ч\n` +
+		`Тревога: ${anxiety}\n` +
+		`Раздражительность: ${irritability}\n` +
+		`Лекарства: ${medication}` +
+		`${note ? `\n💬 ${note}` : ""}`,
+	history_btn_prev: (_: Record<string, never>) => "← Предыдущие",
+	history_btn_next: (_: Record<string, never>) => "Следующие →",
+
+	// ===== WEEK =====
+	week_title: ({
+		startDate,
+		endDate,
+	}: {
+		startDate: string;
+		endDate: string;
+	}) => `📊 Неделя: ${startDate} — ${endDate}`,
+	week_stats: ({
+		records,
+		totalDays,
+		avgMood,
+		avgEnergy,
+		avgSleep,
+		avgAnxiety,
+		avgIrritability,
+		trend,
+	}: {
+		records: number;
+		totalDays: number;
+		avgMood: string;
+		avgEnergy: string;
+		avgSleep: string;
+		avgAnxiety: string;
+		avgIrritability: string;
+		trend: string;
+	}) =>
+		`Записей: ${records}/${totalDays}\n\n` +
+		`Настроение (ср): ${avgMood}\n` +
+		`Энергия (ср): ${avgEnergy}\n` +
+		`Сон (ср): ${avgSleep}ч\n` +
+		`Тревога (ср): ${avgAnxiety}\n` +
+		`Раздражительность (ср): ${avgIrritability}\n\n` +
+		`Тренд настроения: ${trend}`,
+	week_no_data: (_: Record<string, never>) => "Нет чек-инов за эту неделю.",
+	week_btn_prev: (_: Record<string, never>) => "← Пред. неделя",
+	week_btn_next: (_: Record<string, never>) => "След. неделя →",
+
+	// ===== MONTH =====
+	month_title: ({ monthName, year }: { monthName: string; year: number }) =>
+		`📅 ${monthName} ${year}`,
+	month_stats: ({
+		records,
+		totalDays,
+		avgMood,
+		avgEnergy,
+		avgSleep,
+		avgAnxiety,
+		avgIrritability,
+		trend,
+	}: {
+		records: number;
+		totalDays: number;
+		avgMood: string;
+		avgEnergy: string;
+		avgSleep: string;
+		avgAnxiety: string;
+		avgIrritability: string;
+		trend: string;
+	}) =>
+		`Записей: ${records}/${totalDays}\n\n` +
+		`Настроение (ср): ${avgMood}\n` +
+		`Энергия (ср): ${avgEnergy}\n` +
+		`Сон (ср): ${avgSleep}ч\n` +
+		`Тревога (ср): ${avgAnxiety}\n` +
+		`Раздражительность (ср): ${avgIrritability}\n\n` +
+		`Тренд настроения: ${trend}`,
+	month_no_data: (_: Record<string, never>) => "Нет чек-инов за этот месяц.",
+	month_btn_prev: (_: Record<string, never>) => "← Пред.",
+	month_btn_next: (_: Record<string, never>) => "След. →",
+	month_btn_back: (_: Record<string, never>) => "← К календарю",
+	month_day_checkin: ({
+		date,
+		mood,
+		energy,
+		sleepHours,
+		sleepQuality,
+		anxiety,
+		irritability,
+		medication,
+		note,
+	}: {
+		date: string;
+		mood: string;
+		energy: string;
+		sleepHours: string;
+		sleepQuality: string;
+		anxiety: string;
+		irritability: string;
+		medication: string;
+		note: string | null;
+	}) =>
+		`📅 ${date}\n\n` +
+		`Настроение: ${mood}\n` +
+		`Энергия: ${energy}\n` +
+		`Сон: ${sleepHours}ч (${sleepQuality})\n` +
+		`Тревога: ${anxiety}\n` +
+		`Раздражительность: ${irritability}\n` +
+		`Лекарства: ${medication}` +
+		`${note ? `\nЗаметка: ${note}` : ""}`,
+	month_day_no_checkin: ({ date }: { date: string }) =>
+		`📅 ${date}\n\nВ этот день чек-ина не было.`,
+	month_day_btn_record: (_: Record<string, never>) => "Записать чек-ин",
+	month_day_btn_overwrite: (_: Record<string, never>) => "Перезаписать чек-ин",
 } as const;

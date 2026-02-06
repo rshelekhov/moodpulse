@@ -253,4 +253,149 @@ export const en = {
 		"No check-in recorded today yet. Would you like to log one?",
 
 	today_btn_checkin: (_: Record<string, never>) => "Record check-in",
+
+	// ===== TREND =====
+	trend_rising: (_: Record<string, never>) => "↗ rising",
+	trend_falling: (_: Record<string, never>) => "↘ falling",
+	trend_stable: (_: Record<string, never>) => "→ stable",
+	trend_insufficient: (_: Record<string, never>) => "— insufficient data",
+
+	// ===== HISTORY =====
+	history_title: (_: Record<string, never>) => "📋 Check-in history",
+	history_empty: (_: Record<string, never>) =>
+		"No records yet. Make your first check-in with /checkin",
+	history_entry: ({
+		date,
+		mood,
+		energy,
+		sleepHours,
+		anxiety,
+		irritability,
+		medication,
+		note,
+	}: {
+		date: string;
+		mood: string;
+		energy: string;
+		sleepHours: string;
+		anxiety: string;
+		irritability: string;
+		medication: string;
+		note: string | null;
+	}) =>
+		`📅 ${date}\n` +
+		`Mood: ${mood}\n` +
+		`Energy: ${energy}\n` +
+		`Sleep: ${sleepHours}h\n` +
+		`Anxiety: ${anxiety}\n` +
+		`Irritability: ${irritability}\n` +
+		`Medication: ${medication}` +
+		`${note ? `\n💬 ${note}` : ""}`,
+	history_btn_prev: (_: Record<string, never>) => "← Previous",
+	history_btn_next: (_: Record<string, never>) => "Next →",
+
+	// ===== WEEK =====
+	week_title: ({
+		startDate,
+		endDate,
+	}: {
+		startDate: string;
+		endDate: string;
+	}) => `📊 Week: ${startDate} — ${endDate}`,
+	week_stats: ({
+		records,
+		totalDays,
+		avgMood,
+		avgEnergy,
+		avgSleep,
+		avgAnxiety,
+		avgIrritability,
+		trend,
+	}: {
+		records: number;
+		totalDays: number;
+		avgMood: string;
+		avgEnergy: string;
+		avgSleep: string;
+		avgAnxiety: string;
+		avgIrritability: string;
+		trend: string;
+	}) =>
+		`Records: ${records}/${totalDays}\n\n` +
+		`Mood (avg): ${avgMood}\n` +
+		`Energy (avg): ${avgEnergy}\n` +
+		`Sleep (avg): ${avgSleep}h\n` +
+		`Anxiety (avg): ${avgAnxiety}\n` +
+		`Irritability (avg): ${avgIrritability}\n\n` +
+		`Mood trend: ${trend}`,
+	week_no_data: (_: Record<string, never>) => "No check-ins this week.",
+	week_btn_prev: (_: Record<string, never>) => "← Prev week",
+	week_btn_next: (_: Record<string, never>) => "Next week →",
+
+	// ===== MONTH =====
+	month_title: ({ monthName, year }: { monthName: string; year: number }) =>
+		`📅 ${monthName} ${year}`,
+	month_stats: ({
+		records,
+		totalDays,
+		avgMood,
+		avgEnergy,
+		avgSleep,
+		avgAnxiety,
+		avgIrritability,
+		trend,
+	}: {
+		records: number;
+		totalDays: number;
+		avgMood: string;
+		avgEnergy: string;
+		avgSleep: string;
+		avgAnxiety: string;
+		avgIrritability: string;
+		trend: string;
+	}) =>
+		`Records: ${records}/${totalDays}\n\n` +
+		`Mood (avg): ${avgMood}\n` +
+		`Energy (avg): ${avgEnergy}\n` +
+		`Sleep (avg): ${avgSleep}h\n` +
+		`Anxiety (avg): ${avgAnxiety}\n` +
+		`Irritability (avg): ${avgIrritability}\n\n` +
+		`Mood trend: ${trend}`,
+	month_no_data: (_: Record<string, never>) => "No check-ins this month.",
+	month_btn_prev: (_: Record<string, never>) => "← Prev",
+	month_btn_next: (_: Record<string, never>) => "Next →",
+	month_btn_back: (_: Record<string, never>) => "← Back to calendar",
+	month_day_checkin: ({
+		date,
+		mood,
+		energy,
+		sleepHours,
+		sleepQuality,
+		anxiety,
+		irritability,
+		medication,
+		note,
+	}: {
+		date: string;
+		mood: string;
+		energy: string;
+		sleepHours: string;
+		sleepQuality: string;
+		anxiety: string;
+		irritability: string;
+		medication: string;
+		note: string | null;
+	}) =>
+		`📅 ${date}\n\n` +
+		`Mood: ${mood}\n` +
+		`Energy: ${energy}\n` +
+		`Sleep: ${sleepHours}h (${sleepQuality})\n` +
+		`Anxiety: ${anxiety}\n` +
+		`Irritability: ${irritability}\n` +
+		`Medication: ${medication}` +
+		`${note ? `\nNote: ${note}` : ""}`,
+	month_day_no_checkin: ({ date }: { date: string }) =>
+		`📅 ${date}\n\nNo check-in recorded on this day.`,
+	month_day_btn_record: (_: Record<string, never>) => "Record check-in",
+	month_day_btn_overwrite: (_: Record<string, never>) => "Overwrite check-in",
 } as const;

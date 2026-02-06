@@ -18,9 +18,9 @@ export function createVerticalKeyboard(
 ): InlineKeyboard {
 	const keyboard = new InlineKeyboard();
 
-	for (let i = 0; i < items.length; i++) {
+	for (const [i, item] of items.entries()) {
 		if (i > 0) keyboard.row();
-		keyboard.text(items[i].label, items[i].data);
+		keyboard.text(item.label, item.data);
 	}
 
 	return addCancelButton(keyboard, locale);
@@ -45,9 +45,9 @@ export function createGridKeyboard(
 ): InlineKeyboard {
 	const keyboard = new InlineKeyboard();
 
-	for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+	for (const [rowIndex, row] of rows.entries()) {
 		if (rowIndex > 0) keyboard.row();
-		for (const item of rows[rowIndex]) {
+		for (const item of row) {
 			keyboard.text(item.label, item.data);
 		}
 	}

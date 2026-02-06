@@ -4,8 +4,8 @@ import { getCheckinConfig } from "../../config/config";
 import { type Locale, t } from "../../lib/i18n";
 import type { BotConversation, ConversationContext } from "../context";
 import {
-	CB,
 	addCancelButton,
+	CB,
 	createGridKeyboard,
 	createHorizontalKeyboard,
 	createVerticalKeyboard,

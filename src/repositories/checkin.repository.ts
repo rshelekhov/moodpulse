@@ -57,6 +57,33 @@ export async function updateCheckinByIdForUser(
 	});
 }
 
+export async function findCheckinsByUserIdPaginated(
+	userId: string,
+	limit: number,
+	offset: number,
+) {
+	return prisma.checkin.findMany({
+		where: { userId },
+		orderBy: { localDate: "desc" },
+		take: limit + 1,
+		skip: offset,
+	});
+}
+
+export async function findCheckinsByUserIdAndDateRange(
+	userId: string,
+	startDate: string,
+	endDate: string,
+) {
+	return prisma.checkin.findMany({
+		where: {
+			userId,
+			localDate: { gte: startDate, lte: endDate },
+		},
+		orderBy: { localDate: "asc" },
+	});
+}
+
 export async function findUserByTelegramId(telegramId: bigint) {
 	return prisma.user.findUnique({
 		where: { telegramId },
