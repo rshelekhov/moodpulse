@@ -8,6 +8,7 @@ const configSchema = z.object({
 		.string()
 		.startsWith("postgresql://", "Must be a PostgreSQL URL"),
 	BOT_TOKEN: z.string().min(1, "BOT_TOKEN is required"),
+	NOTE_MAX_LENGTH: z.coerce.number().int().positive().default(500),
 });
 
 export type Config = z.infer<typeof configSchema>;
@@ -23,6 +24,7 @@ export function loadConfig(): Config {
 		NODE_ENV: process.env.NODE_ENV,
 		DATABASE_URL: process.env.DATABASE_URL,
 		BOT_TOKEN: process.env.BOT_TOKEN,
+		NOTE_MAX_LENGTH: process.env.NOTE_MAX_LENGTH,
 	});
 
 	if (!result.success) {
@@ -47,10 +49,8 @@ export function isProd(): boolean {
 	return getConfig().NODE_ENV === "production";
 }
 
-const checkinConfig = {
-	noteMaxLength: 500,
-} as const;
-
 export function getCheckinConfig() {
-	return checkinConfig;
+	return {
+		noteMaxLength: getConfig().NOTE_MAX_LENGTH,
+	};
 }
