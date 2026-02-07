@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "../infrastructure/database";
 
 export type UpsertUserInput = {
@@ -32,5 +33,81 @@ export async function upsertUserByTelegramId(input: UpsertUserInput) {
 			languageCode: input.languageCode ?? null,
 		},
 		update: updateData,
+	});
+}
+
+export async function findUsersDueForReminder(now: Date) {
+	return prisma.user.findMany({
+		where: {
+			reminderEnabled: true,
+			reminderNextAt: { lte: now },
+		},
+		select: {
+			id: true,
+			telegramId: true,
+			timezone: true,
+			reminderTime: true,
+			reminderLastSentLocalDate: true,
+			reminderSnoozeUntil: true,
+			reminderSkipLocalDate: true,
+			languageCode: true,
+		},
+	});
+}
+
+export async function findUsersWithNullReminderNextAt() {
+	return prisma.user.findMany({
+		where: {
+			reminderEnabled: true,
+			reminderNextAt: null,
+		},
+		select: { id: true, reminderTime: true, timezone: true },
+	});
+}
+
+export async function updateUserReminderState(
+	userId: string,
+	data: {
+		reminderNextAt?: Date | null;
+		reminderLastSentLocalDate?: string | null;
+		reminderSnoozeUntil?: Date | null;
+		reminderSkipLocalDate?: string | null;
+	},
+) {
+	return prisma.user.update({
+		where: { id: userId },
+		data,
+	});
+}
+
+export async function updateUserTimezone(userId: string, timezone: string) {
+	return prisma.user.update({
+		where: { id: userId },
+		data: { timezone, timezoneSetByUser: true },
+	});
+}
+
+export async function updateUserReminderSettings(
+	userId: string,
+	data: Prisma.UserUpdateInput,
+) {
+	return prisma.user.update({
+		where: { id: userId },
+		data,
+	});
+}
+
+export async function findUserByTelegramIdFull(telegramId: bigint) {
+	return prisma.user.findUnique({
+		where: { telegramId },
+		select: {
+			id: true,
+			telegramId: true,
+			timezone: true,
+			timezoneSetByUser: true,
+			reminderEnabled: true,
+			reminderTime: true,
+			languageCode: true,
+		},
 	});
 }

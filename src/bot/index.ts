@@ -17,11 +17,27 @@ import {
 	handleMonthNavigation,
 	handleMonthStartCheckin,
 } from "./commands/month";
+import {
+	handleReminderCommand,
+	handleReminderSettingsTz,
+	handleReminderTimePreset,
+	handleReminderTimeSelect,
+	handleReminderToggle,
+	handleReminderTzSelect,
+} from "./commands/reminder";
+import {
+	handleReminderCheckin,
+	handleReminderSkip,
+	handleReminderSnooze,
+} from "./commands/reminder-callbacks";
 import { handleStartCommand } from "./commands/start";
+import { handleTimezoneSelect } from "./commands/timezone";
 import { handleTodayCommand, handleTodayStartCheckin } from "./commands/today";
 import { handleWeekCommand, handleWeekNavigation } from "./commands/week";
 import type { BotContext, SessionData } from "./context";
 import { checkinConversation } from "./conversations/checkin";
+import { reminderTimeConversation } from "./conversations/reminder-time";
+import { timezoneConversation } from "./conversations/timezone";
 
 const logger = createChildLogger("bot");
 
@@ -41,6 +57,8 @@ export function createBot(): Bot<BotContext> {
 	bot.use(conversations());
 
 	bot.use(createConversation(checkinConversation, "checkin"));
+	bot.use(createConversation(reminderTimeConversation, "reminderTime"));
+	bot.use(createConversation(timezoneConversation, "timezone"));
 
 	// Error-handling middleware (covers all updates passing through middlewares)
 	bot.use(async (ctx, next) => {
@@ -91,6 +109,7 @@ export function createBot(): Bot<BotContext> {
 	bot.command("history", handleHistoryCommand);
 	bot.command("week", handleWeekCommand);
 	bot.command("month", handleMonthCommand);
+	bot.command("reminder", handleReminderCommand);
 
 	bot.callbackQuery("today:start_checkin", handleTodayStartCheckin);
 	bot.callbackQuery(/^history:page:\d+$/, handleHistoryPagination);
@@ -103,6 +122,38 @@ export function createBot(): Bot<BotContext> {
 		handleMonthStartCheckin,
 	);
 	bot.callbackQuery("month:noop", async (ctx) => ctx.answerCallbackQuery());
+
+	// Reminder notification buttons
+	bot.callbackQuery("reminder:checkin", handleReminderCheckin);
+	bot.callbackQuery(/^reminder:snooze:\d+$/, handleReminderSnooze);
+	bot.callbackQuery("reminder:skip", handleReminderSkip);
+
+	// Reminder settings callbacks
+	bot.callbackQuery(
+		/^reminder:settings:(enable|disable)$/,
+		handleReminderToggle,
+	);
+	bot.callbackQuery("reminder:settings:time", handleReminderTimeSelect);
+	bot.callbackQuery("reminder:settings:tz", handleReminderSettingsTz);
+	bot.callbackQuery(/^reminder:time:\d{4}$/, handleReminderTimePreset);
+	bot.callbackQuery("reminder:time:custom", async (ctx) => {
+		await ctx.answerCallbackQuery();
+		await ctx.conversation.enter("reminderTime");
+	});
+
+	// Reminder inline timezone flow (TZ → time selection)
+	bot.callbackQuery(/^reminder:tz:set:.+$/, handleReminderTzSelect);
+	bot.callbackQuery("reminder:tz:custom", async (ctx) => {
+		await ctx.answerCallbackQuery();
+		await ctx.conversation.enter("timezone");
+	});
+
+	// Standalone timezone callbacks
+	bot.callbackQuery(/^tz:set:.+$/, handleTimezoneSelect);
+	bot.callbackQuery("tz:custom", async (ctx) => {
+		await ctx.answerCallbackQuery();
+		await ctx.conversation.enter("timezone");
+	});
 
 	setBotCommands(bot);
 

@@ -15,15 +15,23 @@ model User {
   lastName     String?
   languageCode String?
 
-  timezone String @default("Europe/Moscow")
-  reminderEnabled Boolean @default(true)
-  reminderTime    String  @default("21:00")
+  timezone          String  @default("Europe/Moscow")
+  timezoneSetByUser Boolean @default(false)
+  reminderEnabled   Boolean @default(true)
+  reminderTime      String  @default("21:00")
   takingMedications Boolean @default(false)
+
+  reminderNextAt          DateTime?
+  reminderLastSentLocalDate String?
+  reminderSnoozeUntil     DateTime?
+  reminderSkipLocalDate   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   checkins Checkin[]
+
+  @@index([reminderEnabled, reminderNextAt])
 }
 
 model Checkin {

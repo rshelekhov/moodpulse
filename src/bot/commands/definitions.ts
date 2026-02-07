@@ -12,6 +12,7 @@ const commands: BotCommand[] = [
 	{ command: "history", description: "Last check-ins list" },
 	{ command: "week", description: "Weekly averages & mood trend" },
 	{ command: "month", description: "Monthly averages, mood trend & calendar" },
+	{ command: "reminder", description: "Reminder settings" },
 ];
 
 const commandsRu: BotCommand[] = [
@@ -24,6 +25,7 @@ const commandsRu: BotCommand[] = [
 		command: "month",
 		description: "Средние за месяц, тренд настроения и календарь",
 	},
+	{ command: "reminder", description: "Настройки напоминаний" },
 ];
 
 export async function setBotCommands(bot: Bot<BotContext>): Promise<void> {

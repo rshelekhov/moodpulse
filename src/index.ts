@@ -2,6 +2,10 @@ import { createBot } from "./bot";
 import { loadConfig } from "./config/config";
 import { connectDatabase, disconnectDatabase } from "./infrastructure/database";
 import { logger } from "./lib/logger";
+import {
+	createReminderScheduler,
+	type ReminderScheduler,
+} from "./scheduler/reminder-scheduler";
 
 async function main(): Promise<void> {
 	loadConfig();
@@ -12,6 +16,9 @@ async function main(): Promise<void> {
 	const bot = createBot();
 	logger.info("Bot instance created");
 
+	scheduler = createReminderScheduler(bot.api);
+	scheduler.start();
+
 	logger.info("Starting bot polling...");
 	await bot.start({
 		onStart: (botInfo) => {
@@ -20,8 +27,11 @@ async function main(): Promise<void> {
 	});
 }
 
+let scheduler: ReminderScheduler | null = null;
+
 async function shutdown(): Promise<void> {
 	logger.info("Shutting down...");
+	if (scheduler) scheduler.stop();
 	await disconnectDatabase();
 	process.exit(0);
 }

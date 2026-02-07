@@ -399,4 +399,75 @@ export const ru = {
 		`📅 ${date}\n\nВ этот день чек-ина не было.`,
 	month_day_btn_record: (_: Record<string, never>) => "Записать чек-ин",
 	month_day_btn_overwrite: (_: Record<string, never>) => "Перезаписать чек-ин",
+
+	// ===== REMINDER SETTINGS =====
+	reminder_title: (_: Record<string, never>) => "Настройки напоминаний",
+	reminder_status: ({
+		enabled,
+		time,
+		timezone,
+	}: {
+		enabled: boolean;
+		time: string;
+		timezone: string;
+	}) =>
+		`Напоминания: ${enabled ? "включены" : "выключены"}\n` +
+		`Время: ${time}\n` +
+		`Часовой пояс: ${timezone}`,
+	reminder_enabled: (_: Record<string, never>) => "Напоминания включены.",
+	reminder_disabled: (_: Record<string, never>) => "Напоминания выключены.",
+	reminder_time_updated: ({ time }: { time: string }) =>
+		`Время напоминания установлено: ${time}`,
+	reminder_select_time: (_: Record<string, never>) =>
+		"Выберите время напоминания:",
+	reminder_enter_custom_time: (_: Record<string, never>) =>
+		"Введите время в формате ЧЧ:ММ (24-часовой формат):",
+	reminder_invalid_time: (_: Record<string, never>) =>
+		"Неверный формат. Введите время в формате ЧЧ:ММ, например 21:00",
+	reminder_tz_required: (_: Record<string, never>) =>
+		"Сначала нужно установить часовой пояс.\nВыберите ваш часовой пояс:",
+	reminder_btn_enable: (_: Record<string, never>) => "Включить напоминания",
+	reminder_btn_disable: (_: Record<string, never>) => "Выключить напоминания",
+	reminder_btn_change_time: (_: Record<string, never>) => "Изменить время",
+	reminder_btn_change_tz: (_: Record<string, never>) => "Изменить часовой пояс",
+	reminder_btn_custom_time: (_: Record<string, never>) => "Другое время",
+
+	// ===== REMINDER NOTIFICATION =====
+	reminder_message: (_: Record<string, never>) =>
+		"Здравствуйте! Время для ежедневного чек-ина. Как вы сегодня?",
+	reminder_btn_start_checkin: (_: Record<string, never>) => "Записать чек-ин",
+	reminder_btn_snooze_30: (_: Record<string, never>) => "Через 30 мин",
+	reminder_btn_snooze_60: (_: Record<string, never>) => "Через 1 час",
+	reminder_btn_snooze_120: (_: Record<string, never>) => "Через 2 часа",
+	reminder_btn_skip_today: (_: Record<string, never>) => "Пропустить сегодня",
+	reminder_snoozed: ({ minutes }: { minutes: number }) =>
+		`Хорошо, напомню через ${minutes} мин.`,
+	reminder_skipped: (_: Record<string, never>) =>
+		"Хорошо, сегодня без напоминания.",
+
+	// ===== TIMEZONE =====
+	timezone_title: (_: Record<string, never>) => "Выберите часовой пояс",
+	timezone_current: ({ timezone }: { timezone: string }) =>
+		`Текущий часовой пояс: ${timezone}`,
+	timezone_updated: ({ timezone }: { timezone: string }) =>
+		`Часовой пояс установлен: ${timezone}`,
+	timezone_btn_moscow: (_: Record<string, never>) => "Москва (UTC+3)",
+	timezone_btn_kaliningrad: (_: Record<string, never>) => "Калининград (UTC+2)",
+	timezone_btn_samara: (_: Record<string, never>) => "Самара (UTC+4)",
+	timezone_btn_yekaterinburg: (_: Record<string, never>) =>
+		"Екатеринбург (UTC+5)",
+	timezone_btn_novosibirsk: (_: Record<string, never>) => "Новосибирск (UTC+7)",
+	timezone_btn_krasnoyarsk: (_: Record<string, never>) => "Красноярск (UTC+7)",
+	timezone_btn_vladivostok: (_: Record<string, never>) =>
+		"Владивосток (UTC+10)",
+	timezone_btn_kyiv: (_: Record<string, never>) => "Киев (UTC+2/+3)",
+	timezone_btn_minsk: (_: Record<string, never>) => "Минск (UTC+3)",
+	timezone_btn_london: (_: Record<string, never>) => "Лондон (UTC+0/+1)",
+	timezone_btn_berlin: (_: Record<string, never>) => "Берлин (UTC+1/+2)",
+	timezone_btn_new_york: (_: Record<string, never>) => "Нью-Йорк (UTC-5/-4)",
+	timezone_btn_other: (_: Record<string, never>) => "Другой (ввести вручную)",
+	timezone_enter_custom: (_: Record<string, never>) =>
+		"Введите IANA название часового пояса (например, Asia/Tokyo, America/Chicago):",
+	timezone_invalid: (_: Record<string, never>) =>
+		"Неверный часовой пояс. Попробуйте ещё раз. Примеры: Europe/Moscow, Asia/Tokyo",
 } as const;

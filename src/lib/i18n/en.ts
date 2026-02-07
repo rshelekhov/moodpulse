@@ -398,4 +398,73 @@ export const en = {
 		`📅 ${date}\n\nNo check-in recorded on this day.`,
 	month_day_btn_record: (_: Record<string, never>) => "Record check-in",
 	month_day_btn_overwrite: (_: Record<string, never>) => "Overwrite check-in",
+
+	// ===== REMINDER SETTINGS =====
+	reminder_title: (_: Record<string, never>) => "Reminder settings",
+	reminder_status: ({
+		enabled,
+		time,
+		timezone,
+	}: {
+		enabled: boolean;
+		time: string;
+		timezone: string;
+	}) =>
+		`Reminders: ${enabled ? "on" : "off"}\n` +
+		`Time: ${time}\n` +
+		`Timezone: ${timezone}`,
+	reminder_enabled: (_: Record<string, never>) => "Reminders enabled.",
+	reminder_disabled: (_: Record<string, never>) => "Reminders disabled.",
+	reminder_time_updated: ({ time }: { time: string }) =>
+		`Reminder time set to ${time}`,
+	reminder_select_time: (_: Record<string, never>) => "Choose a reminder time:",
+	reminder_enter_custom_time: (_: Record<string, never>) =>
+		"Enter time in HH:MM format (24-hour):",
+	reminder_invalid_time: (_: Record<string, never>) =>
+		"Invalid format. Please enter time as HH:MM, e.g. 21:00",
+	reminder_tz_required: (_: Record<string, never>) =>
+		"You need to set your timezone first.\nPlease choose your timezone:",
+	reminder_btn_enable: (_: Record<string, never>) => "Enable reminders",
+	reminder_btn_disable: (_: Record<string, never>) => "Disable reminders",
+	reminder_btn_change_time: (_: Record<string, never>) => "Change time",
+	reminder_btn_change_tz: (_: Record<string, never>) => "Change timezone",
+	reminder_btn_custom_time: (_: Record<string, never>) => "Other time",
+
+	// ===== REMINDER NOTIFICATION =====
+	reminder_message: (_: Record<string, never>) =>
+		"Hi! Time for your daily check-in. How are you today?",
+	reminder_btn_start_checkin: (_: Record<string, never>) => "Record check-in",
+	reminder_btn_snooze_30: (_: Record<string, never>) => "In 30 min",
+	reminder_btn_snooze_60: (_: Record<string, never>) => "In 1 hour",
+	reminder_btn_snooze_120: (_: Record<string, never>) => "In 2 hours",
+	reminder_btn_skip_today: (_: Record<string, never>) => "Skip today",
+	reminder_snoozed: ({ minutes }: { minutes: number }) =>
+		`Got it, I'll remind you in ${minutes} min.`,
+	reminder_skipped: (_: Record<string, never>) => "Okay, no reminder today.",
+
+	// ===== TIMEZONE =====
+	timezone_title: (_: Record<string, never>) => "Choose your timezone",
+	timezone_current: ({ timezone }: { timezone: string }) =>
+		`Current timezone: ${timezone}`,
+	timezone_updated: ({ timezone }: { timezone: string }) =>
+		`Timezone set to ${timezone}`,
+	timezone_btn_moscow: (_: Record<string, never>) => "Moscow (UTC+3)",
+	timezone_btn_kaliningrad: (_: Record<string, never>) => "Kaliningrad (UTC+2)",
+	timezone_btn_samara: (_: Record<string, never>) => "Samara (UTC+4)",
+	timezone_btn_yekaterinburg: (_: Record<string, never>) =>
+		"Yekaterinburg (UTC+5)",
+	timezone_btn_novosibirsk: (_: Record<string, never>) => "Novosibirsk (UTC+7)",
+	timezone_btn_krasnoyarsk: (_: Record<string, never>) => "Krasnoyarsk (UTC+7)",
+	timezone_btn_vladivostok: (_: Record<string, never>) =>
+		"Vladivostok (UTC+10)",
+	timezone_btn_kyiv: (_: Record<string, never>) => "Kyiv (UTC+2/+3)",
+	timezone_btn_minsk: (_: Record<string, never>) => "Minsk (UTC+3)",
+	timezone_btn_london: (_: Record<string, never>) => "London (UTC+0/+1)",
+	timezone_btn_berlin: (_: Record<string, never>) => "Berlin (UTC+1/+2)",
+	timezone_btn_new_york: (_: Record<string, never>) => "New York (UTC-5/-4)",
+	timezone_btn_other: (_: Record<string, never>) => "Other (enter manually)",
+	timezone_enter_custom: (_: Record<string, never>) =>
+		"Enter an IANA timezone name (e.g. Asia/Tokyo, America/Chicago):",
+	timezone_invalid: (_: Record<string, never>) =>
+		"Invalid timezone. Please try again. Examples: Europe/Moscow, Asia/Tokyo",
 } as const;
