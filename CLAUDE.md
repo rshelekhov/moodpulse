@@ -201,6 +201,18 @@ DATABASE_URL="postgresql://user:password@localhost:5432/moodpulse"
 BOT_TOKEN="your-bot-token"
 ```
 
+### Code Style Rules
+
+- Do NOT add comments unless the logic is genuinely non-obvious
+- Run `bunx --bun biome check --write .` after writing/editing code
+- Run `bun test tests/` before considering a task done
+
+### Git Commit Rules
+
+- Do NOT include `Co-Authored-By` lines in commits
+- Keep commit messages to a single short line (imperative mood)
+- Do NOT mention Claude, Claude Code, or AI in commits
+
 ### Useful Resources
 
 - [grammY docs](https://grammy.dev/)
