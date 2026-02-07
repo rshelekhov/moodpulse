@@ -25,9 +25,11 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
+		"@date-fns/tz": "^1.4.1",
 		"@grammyjs/conversations": "^2.1.1",
 		"@prisma/adapter-pg": "^7.3.0",
 		"@prisma/client": "^7.3.0",
+		"croner": "^10.0.1",
 		"grammy": "^1.39.3",
 		"pino": "^10.3.0",
 		"zod": "^4.3.6"
