@@ -70,7 +70,7 @@ export function calculateTrend(
 	return diff > 0 ? "rising" : "falling";
 }
 
-function computeStats(
+export function computeStats(
 	checkins: {
 		localDate: string;
 		mood: number;
@@ -173,4 +173,20 @@ export async function getCheckinForDate(telegramId: number, localDate: string) {
 	if (!user) return null;
 
 	return findCheckinByUserIdAndLocalDate(user.id, localDate);
+}
+
+export async function getLast7CheckinsWithStats(telegramId: number) {
+	const user = await findUserByTelegramId(BigInt(telegramId));
+	if (!user) return null;
+
+	const rows = await findCheckinsByUserIdPaginated(user.id, 7, 0);
+	const checkins = rows.slice(0, 7);
+
+	if (checkins.length === 0) {
+		return { checkins: [], stats: null };
+	}
+
+	const dates = checkins.map((c) => c.localDate).sort();
+	const stats = computeStats(checkins, dates, "week");
+	return { checkins, stats };
 }

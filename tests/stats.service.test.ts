@@ -1,8 +1,28 @@
 import { describe, expect, test } from "bun:test";
-import { calculateTrend } from "../src/services/stats.service";
+import { calculateTrend, computeStats } from "../src/services/stats.service";
 
 function makeCheckin(localDate: string, mood: number) {
 	return { localDate, mood };
+}
+
+function makeFullCheckin(
+	localDate: string,
+	overrides: Partial<{
+		mood: number;
+		energy: number;
+		sleepDuration: number;
+		anxiety: number;
+		irritability: number;
+	}> = {},
+) {
+	return {
+		localDate,
+		mood: overrides.mood ?? 0,
+		energy: overrides.energy ?? 3,
+		sleepDuration: overrides.sleepDuration ?? 7,
+		anxiety: overrides.anxiety ?? 1,
+		irritability: overrides.irritability ?? 0,
+	};
 }
 
 describe("calculateTrend", () => {
@@ -143,5 +163,70 @@ describe("calculateTrend", () => {
 
 			expect(calculateTrend(checkins, dates, "month")).toBe("falling");
 		});
+	});
+});
+
+describe("computeStats", () => {
+	test("returns zero stats for empty checkins", () => {
+		const dates = ["2026-02-01", "2026-02-02", "2026-02-03"];
+		const result = computeStats([], dates, "week");
+		expect(result.records).toBe(0);
+		expect(result.totalDays).toBe(3);
+		expect(result.avgMood).toBe(0);
+		expect(result.trend).toBe("insufficient_data");
+	});
+
+	test("computes correct averages", () => {
+		const checkins = [
+			makeFullCheckin("2026-02-01", {
+				mood: 2,
+				energy: 4,
+				sleepDuration: 8,
+				anxiety: 2,
+				irritability: 1,
+			}),
+			makeFullCheckin("2026-02-02", {
+				mood: -2,
+				energy: 2,
+				sleepDuration: 6,
+				anxiety: 0,
+				irritability: 3,
+			}),
+		];
+		const dates = ["2026-02-01", "2026-02-02"];
+		const result = computeStats(checkins, dates, "week");
+
+		expect(result.records).toBe(2);
+		expect(result.totalDays).toBe(2);
+		expect(result.avgMood).toBe(0);
+		expect(result.avgEnergy).toBe(3);
+		expect(result.avgSleep).toBe(7);
+		expect(result.avgAnxiety).toBe(1);
+		expect(result.avgIrritability).toBe(2);
+	});
+
+	test("rounds averages to one decimal", () => {
+		const checkins = [
+			makeFullCheckin("2026-02-01", { mood: 1 }),
+			makeFullCheckin("2026-02-02", { mood: 2 }),
+			makeFullCheckin("2026-02-03", { mood: 0 }),
+		];
+		const dates = ["2026-02-01", "2026-02-02", "2026-02-03"];
+		const result = computeStats(checkins, dates, "week");
+
+		expect(result.avgMood).toBe(1);
+	});
+
+	test("checkinDates contains all dates from checkins", () => {
+		const checkins = [
+			makeFullCheckin("2026-02-01"),
+			makeFullCheckin("2026-02-03"),
+		];
+		const dates = ["2026-02-01", "2026-02-02", "2026-02-03"];
+		const result = computeStats(checkins, dates, "week");
+
+		expect(result.checkinDates.has("2026-02-01")).toBe(true);
+		expect(result.checkinDates.has("2026-02-03")).toBe(true);
+		expect(result.checkinDates.has("2026-02-02")).toBe(false);
 	});
 });

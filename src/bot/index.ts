@@ -7,17 +7,6 @@ import { createChildLogger } from "../lib/logger";
 import { handleCheckinCommand } from "./commands/checkin";
 import { setBotCommands } from "./commands/definitions";
 import {
-	handleHistoryCommand,
-	handleHistoryPagination,
-} from "./commands/history";
-import {
-	handleMonthBack,
-	handleMonthCommand,
-	handleMonthDayClick,
-	handleMonthNavigation,
-	handleMonthStartCheckin,
-} from "./commands/month";
-import {
 	handleReminderCommand,
 	handleReminderSettingsTz,
 	handleReminderTimePreset,
@@ -31,12 +20,30 @@ import {
 	handleReminderSnooze,
 } from "./commands/reminder-callbacks";
 import { handleStartCommand } from "./commands/start";
+import {
+	handleStatsCalendar,
+	handleStatsCommand,
+	handleStatsEmail,
+	handleStatsEmailPeriod,
+	handleStatsExport,
+	handleStatsExportFile,
+	handleStatsExportPick,
+	handleStatsLast7,
+	handleStatsMenu,
+	handleStatsMonth,
+	handleStatsMonthBack,
+	handleStatsMonthCheckin,
+	handleStatsMonthDay,
+	handleStatsMonthNav,
+	handleStatsWeek,
+	handleStatsWeekNav,
+} from "./commands/stats";
 import { handleTimezoneSelect } from "./commands/timezone";
 import { handleTodayCommand, handleTodayStartCheckin } from "./commands/today";
-import { handleWeekCommand, handleWeekNavigation } from "./commands/week";
 import type { BotContext, SessionData } from "./context";
 import { checkinConversation } from "./conversations/checkin";
 import { reminderTimeConversation } from "./conversations/reminder-time";
+import { statsEmailConversation } from "./conversations/stats-email";
 import { timezoneConversation } from "./conversations/timezone";
 
 const logger = createChildLogger("bot");
@@ -59,8 +66,8 @@ export function createBot(): Bot<BotContext> {
 	bot.use(createConversation(checkinConversation, "checkin"));
 	bot.use(createConversation(reminderTimeConversation, "reminderTime"));
 	bot.use(createConversation(timezoneConversation, "timezone"));
+	bot.use(createConversation(statsEmailConversation, "statsEmail"));
 
-	// Error-handling middleware (covers all updates passing through middlewares)
 	bot.use(async (ctx, next) => {
 		try {
 			await next();
@@ -106,22 +113,34 @@ export function createBot(): Bot<BotContext> {
 	bot.command("start", handleStartCommand);
 	bot.command("checkin", handleCheckinCommand);
 	bot.command("today", handleTodayCommand);
-	bot.command("history", handleHistoryCommand);
-	bot.command("week", handleWeekCommand);
-	bot.command("month", handleMonthCommand);
+	bot.command("stats", handleStatsCommand);
 	bot.command("reminder", handleReminderCommand);
 
 	bot.callbackQuery("today:start_checkin", handleTodayStartCheckin);
-	bot.callbackQuery(/^history:page:\d+$/, handleHistoryPagination);
-	bot.callbackQuery(/^week:nav:\d{4}-\d{2}-\d{2}$/, handleWeekNavigation);
-	bot.callbackQuery(/^month:nav:\d{4}-\d{2}$/, handleMonthNavigation);
-	bot.callbackQuery(/^month:day:\d{4}-\d{2}-\d{2}$/, handleMonthDayClick);
-	bot.callbackQuery(/^month:back:\d{4}-\d{2}$/, handleMonthBack);
+
+	// Stats callbacks
+	bot.callbackQuery("stats:menu", handleStatsMenu);
+	bot.callbackQuery("stats:week", handleStatsWeek);
+	bot.callbackQuery("stats:month", handleStatsMonth);
+	bot.callbackQuery("stats:last7", handleStatsLast7);
+	bot.callbackQuery("stats:calendar", handleStatsCalendar);
+	bot.callbackQuery("stats:export", handleStatsExport);
+	bot.callbackQuery("stats:email", handleStatsEmail);
 	bot.callbackQuery(
-		/^month:checkin:\d{4}-\d{2}-\d{2}$/,
-		handleMonthStartCheckin,
+		/^stats:export:pick:(week|month|last7)$/,
+		handleStatsExportPick,
 	);
-	bot.callbackQuery("month:noop", async (ctx) => ctx.answerCallbackQuery());
+	bot.callbackQuery(
+		/^stats:export:(csv|xlsx):(week|month|last7)/,
+		handleStatsExportFile,
+	);
+	bot.callbackQuery(/^stats:email:(week|month|last7)$/, handleStatsEmailPeriod);
+	bot.callbackQuery(/^stats:week:nav:/, handleStatsWeekNav);
+	bot.callbackQuery(/^stats:month:nav:/, handleStatsMonthNav);
+	bot.callbackQuery(/^stats:month:day:/, handleStatsMonthDay);
+	bot.callbackQuery(/^stats:month:back:/, handleStatsMonthBack);
+	bot.callbackQuery(/^stats:month:checkin:/, handleStatsMonthCheckin);
+	bot.callbackQuery("stats:noop", async (ctx) => ctx.answerCallbackQuery());
 
 	// Reminder notification buttons
 	bot.callbackQuery("reminder:checkin", handleReminderCheckin);
@@ -157,7 +176,6 @@ export function createBot(): Bot<BotContext> {
 
 	setBotCommands(bot);
 
-	// Last-resort error handler for anything not caught by middleware
 	bot.catch((err: BotError<BotContext>) => {
 		const ctx = err.ctx;
 		const updateId = ctx.update?.update_id;

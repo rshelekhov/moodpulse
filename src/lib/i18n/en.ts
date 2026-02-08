@@ -467,4 +467,32 @@ export const en = {
 		"Enter an IANA timezone name (e.g. Asia/Tokyo, America/Chicago):",
 	timezone_invalid: (_: Record<string, never>) =>
 		"Invalid timezone. Please try again. Examples: Europe/Moscow, Asia/Tokyo",
+
+	// ===== STATS =====
+	stats_title: (_: Record<string, never>) => "Statistics",
+	stats_btn_week: (_: Record<string, never>) => "Week",
+	stats_btn_month: (_: Record<string, never>) => "Month",
+	stats_btn_last7: (_: Record<string, never>) => "Last 7",
+	stats_btn_calendar: (_: Record<string, never>) => "Calendar",
+	stats_btn_export: (_: Record<string, never>) => "Export",
+	stats_btn_email: (_: Record<string, never>) => "Email",
+	stats_btn_csv: (_: Record<string, never>) => "CSV",
+	stats_btn_xlsx: (_: Record<string, never>) => "Excel",
+	stats_btn_back: (_: Record<string, never>) => "← Back",
+	stats_last7_title: (_: Record<string, never>) => "📋 Last 7 check-ins",
+	stats_last7_empty: (_: Record<string, never>) => "No records yet.",
+	stats_export_select: (_: Record<string, never>) =>
+		"Choose a period to export:",
+	stats_export_format: (_: Record<string, never>) => "Choose format:",
+	stats_email_ask: (_: Record<string, never>) =>
+		"Enter email to send the report to:",
+	stats_email_invalid: (_: Record<string, never>) =>
+		"Invalid email format. Please try again.",
+	stats_email_sending: (_: Record<string, never>) => "Sending report...",
+	stats_email_sent: ({ email }: { email: string }) => `Report sent to ${email}`,
+	stats_email_error: (_: Record<string, never>) =>
+		"Failed to send. Check the address and try again later.",
+	stats_email_not_configured: (_: Record<string, never>) =>
+		"Email sending is not configured.",
+	stats_export_no_data: (_: Record<string, never>) => "No data to export.",
 } as const;

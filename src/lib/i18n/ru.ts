@@ -470,4 +470,34 @@ export const ru = {
 		"Введите IANA название часового пояса (например, Asia/Tokyo, America/Chicago):",
 	timezone_invalid: (_: Record<string, never>) =>
 		"Неверный часовой пояс. Попробуйте ещё раз. Примеры: Europe/Moscow, Asia/Tokyo",
+
+	// ===== STATS =====
+	stats_title: (_: Record<string, never>) => "Статистика",
+	stats_btn_week: (_: Record<string, never>) => "Неделя",
+	stats_btn_month: (_: Record<string, never>) => "Месяц",
+	stats_btn_last7: (_: Record<string, never>) => "Последние 7",
+	stats_btn_calendar: (_: Record<string, never>) => "Календарь",
+	stats_btn_export: (_: Record<string, never>) => "Экспорт",
+	stats_btn_email: (_: Record<string, never>) => "На почту",
+	stats_btn_csv: (_: Record<string, never>) => "CSV",
+	stats_btn_xlsx: (_: Record<string, never>) => "Excel",
+	stats_btn_back: (_: Record<string, never>) => "← Назад",
+	stats_last7_title: (_: Record<string, never>) => "📋 Последние 7 чек-инов",
+	stats_last7_empty: (_: Record<string, never>) => "Пока нет записей.",
+	stats_export_select: (_: Record<string, never>) =>
+		"Выберите период для экспорта:",
+	stats_export_format: (_: Record<string, never>) => "Выберите формат:",
+	stats_email_ask: (_: Record<string, never>) =>
+		"Введите email для отправки отчёта:",
+	stats_email_invalid: (_: Record<string, never>) =>
+		"Неверный формат email. Попробуйте ещё раз.",
+	stats_email_sending: (_: Record<string, never>) => "Отправляю отчёт...",
+	stats_email_sent: ({ email }: { email: string }) =>
+		`Отчёт отправлен на ${email}`,
+	stats_email_error: (_: Record<string, never>) =>
+		"Не удалось отправить. Проверьте адрес и попробуйте позже.",
+	stats_email_not_configured: (_: Record<string, never>) =>
+		"Email-отправка не настроена.",
+	stats_export_no_data: (_: Record<string, never>) =>
+		"Нет данных для экспорта.",
 } as const;
