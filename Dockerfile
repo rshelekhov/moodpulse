@@ -9,6 +9,7 @@ FROM oven/bun:1-debian AS build
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
+COPY prisma.config.ts ./
 COPY src/infrastructure/prisma/schema.prisma src/infrastructure/prisma/schema.prisma
 RUN bunx --bun prisma generate --schema src/infrastructure/prisma/schema.prisma
 
@@ -23,7 +24,7 @@ WORKDIR /app
 
 COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
-COPY package.json ./
+COPY package.json prisma.config.ts ./
 COPY src src
 COPY scripts/entrypoint.sh scripts/entrypoint.sh
 
