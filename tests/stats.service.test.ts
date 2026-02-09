@@ -1,5 +1,16 @@
-import { describe, expect, test } from "bun:test";
-import { calculateTrend, computeStats } from "../src/services/stats.service";
+import { describe, expect, mock, test } from "bun:test";
+
+mock.module("../src/repositories/checkin.repository", () => ({
+	findUserByTelegramId: mock(() => Promise.resolve(null)),
+	findAllCheckinsByUserId: mock(() => Promise.resolve([])),
+	findCheckinsByUserIdAndDateRange: mock(() => Promise.resolve([])),
+	findCheckinsByUserIdPaginated: mock(() => Promise.resolve([])),
+	findCheckinByUserIdAndLocalDate: mock(() => Promise.resolve(null)),
+}));
+
+const { calculateTrend, computeStats } = await import(
+	"../src/services/stats.service"
+);
 
 function makeCheckin(localDate: string, mood: number) {
 	return { localDate, mood };

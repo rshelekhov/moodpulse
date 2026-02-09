@@ -36,63 +36,24 @@ jobs:
           scp -i /tmp/ssh_key docker-compose.yml $SSH_USER@$SSH_HOST:$DEPLOY_DIR/
           scp -i /tmp/ssh_key scripts/backup.sh $SSH_USER@$SSH_HOST:$DEPLOY_DIR/scripts/
 
+      - name: Write .env on VPS
+        run: |
+          echo "${{ secrets.ENV_CONFIG }}" | ssh -i /tmp/ssh_key $SSH_USER@$SSH_HOST "cat > $DEPLOY_DIR/.env"
+
       - name: Deploy on VPS
         run: |
-          ssh -i /tmp/ssh_key $SSH_USER@$SSH_HOST << 'DEPLOY_EOF'
+          ssh -i /tmp/ssh_key $SSH_USER@$SSH_HOST << 'EOF'
             set -e
             cd /opt/moodpulse
 
-            # Load the new image
             docker load -i /tmp/moodpulse.tar
             rm /tmp/moodpulse.tar
 
-            # Preserve existing postgres vars from .env
-            EXISTING_POSTGRES_USER=moodpulse
-            EXISTING_POSTGRES_PASSWORD=changeme
-            EXISTING_POSTGRES_DB=moodpulse
-            EXISTING_NOTE_MAX_LENGTH=500
-            if [ -f .env ]; then
-              . .env
-              EXISTING_POSTGRES_USER="${POSTGRES_USER:-moodpulse}"
-              EXISTING_POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-changeme}"
-              EXISTING_POSTGRES_DB="${POSTGRES_DB:-moodpulse}"
-              EXISTING_NOTE_MAX_LENGTH="${NOTE_MAX_LENGTH:-500}"
-            fi
-
-            # Write .env with infrastructure vars (from VPS) + app secrets (from GitHub)
-            cat > .env <<ENVEOF
-          NODE_ENV=production
-          POSTGRES_USER=${EXISTING_POSTGRES_USER}
-          POSTGRES_PASSWORD=${EXISTING_POSTGRES_PASSWORD}
-          POSTGRES_DB=${EXISTING_POSTGRES_DB}
-          NOTE_MAX_LENGTH=${EXISTING_NOTE_MAX_LENGTH}
-          ENVEOF
-
-          DEPLOY_EOF
-
-          # Append app secrets (not inside single-quoted heredoc so GitHub expressions expand)
-          ssh -i /tmp/ssh_key $SSH_USER@$SSH_HOST "cat >> /opt/moodpulse/.env << ENVEOF
-          BOT_TOKEN=${{ secrets.BOT_TOKEN }}
-          MAILGUN_API_KEY=${{ secrets.MAILGUN_API_KEY }}
-          MAILGUN_DOMAIN=${{ secrets.MAILGUN_DOMAIN }}
-          MAILGUN_FROM=${{ secrets.MAILGUN_FROM }}
-          MAILGUN_API_BASE=${{ secrets.MAILGUN_API_BASE }}
-          PRIVACY_URL=${{ secrets.PRIVACY_URL }}
-          PRIVACY_CONTACT=${{ secrets.PRIVACY_CONTACT }}
-          ENVEOF"
-
-          # Start containers
-          ssh -i /tmp/ssh_key $SSH_USER@$SSH_HOST << 'DEPLOY_EOF'
-            set -e
-            cd /opt/moodpulse
-
-            # Stop old container, start new
             docker compose up -d
 
-            # Wait and show logs
             sleep 5
             docker compose logs --tail 20 bot
-          DEPLOY_EOF
+          EOF
 
       - name: Clean up
         if: always()
