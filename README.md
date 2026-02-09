@@ -13,5 +13,5 @@ Why it exists: standard mood trackers often collapse everything into a single "b
 - ORM: Prisma
 - Database: PostgreSQL
 - Telegram bot: grammY
-- Charts: chart.js + chartjs-node-canvas
+- Charts: chart.js + @napi-rs/canvas
 - Validation: Zod
