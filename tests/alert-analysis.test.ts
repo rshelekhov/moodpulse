@@ -20,7 +20,11 @@ mock.module("../src/repositories/alert.repository", () => ({
 }));
 
 mock.module("../src/repositories/checkin.repository", () => ({
+	findUserByTelegramId: mock(() => Promise.resolve(null)),
+	findAllCheckinsByUserId: mock(() => Promise.resolve([])),
 	findCheckinsByUserIdAndDateRange: mockFindCheckinsByUserIdAndDateRange,
+	findCheckinsByUserIdPaginated: mock(() => Promise.resolve([])),
+	findCheckinByUserIdAndLocalDate: mock(() => Promise.resolve(null)),
 }));
 
 import { analyzeAfterCheckin } from "../src/services/alerts/analysis.service";

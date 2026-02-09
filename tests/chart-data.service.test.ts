@@ -18,8 +18,10 @@ const mockFindCheckinsByUserIdPaginated = mock(() =>
 
 mock.module("../src/repositories/checkin.repository", () => ({
 	findUserByTelegramId: mockFindUserByTelegramId,
+	findAllCheckinsByUserId: mock(() => Promise.resolve([])),
 	findCheckinsByUserIdAndDateRange: mockFindCheckinsByUserIdAndDateRange,
 	findCheckinsByUserIdPaginated: mockFindCheckinsByUserIdPaginated,
+	findCheckinByUserIdAndLocalDate: mock(() => Promise.resolve(null)),
 }));
 
 const { buildWeekSeries, buildMonthSeries, buildLast7CheckinsSeries } =
