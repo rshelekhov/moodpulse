@@ -26,7 +26,6 @@ Why it exists: standard mood trackers often collapse everything into a single "b
 ## Tech Stack
 
 - Runtime: Bun
-- Web framework: Hono
 - ORM: Prisma
 - Database: PostgreSQL
 - Telegram bot: grammY

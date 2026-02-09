@@ -12,6 +12,7 @@
 		"format": "bunx --bun biome format --write .",
 		"prisma:generate": "bunx --bun prisma generate",
 		"prisma:migrate": "bunx --bun prisma migrate dev",
+		"prisma:migrate:prod": "bunx --bun prisma migrate deploy --schema src/infrastructure/prisma/schema.prisma",
 		"prisma:studio": "bunx --bun prisma studio"
 	},
 	"devDependencies": {

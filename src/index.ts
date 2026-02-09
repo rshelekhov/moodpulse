@@ -1,5 +1,6 @@
 import { createBot } from "./bot";
 import { loadConfig } from "./config/config";
+import { startHealthServer, updateHeartbeat } from "./health";
 import { connectDatabase, disconnectDatabase } from "./infrastructure/database";
 import { logger } from "./lib/logger";
 import {
@@ -19,6 +20,11 @@ async function main(): Promise<void> {
 	scheduler = createReminderScheduler(bot.api);
 	scheduler.start();
 
+	startHealthServer();
+
+	const heartbeatInterval = setInterval(() => updateHeartbeat(), 60_000);
+	heartbeatIntervalId = heartbeatInterval;
+
 	logger.info("Starting bot polling...");
 	await bot.start({
 		onStart: (botInfo) => {
@@ -28,9 +34,11 @@ async function main(): Promise<void> {
 }
 
 let scheduler: ReminderScheduler | null = null;
+let heartbeatIntervalId: ReturnType<typeof setInterval> | null = null;
 
 async function shutdown(): Promise<void> {
 	logger.info("Shutting down...");
+	if (heartbeatIntervalId) clearInterval(heartbeatIntervalId);
 	if (scheduler) scheduler.stop();
 	await disconnectDatabase();
 	process.exit(0);

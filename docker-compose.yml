@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - moodpulse
+
+  bot:
+    build: .
+    image: moodpulse:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      BOT_TOKEN: ${BOT_TOKEN}
+      NOTE_MAX_LENGTH: ${NOTE_MAX_LENGTH:-500}
+      HEALTH_PORT: ${HEALTH_PORT:-3000}
+      MAILGUN_API_KEY: ${MAILGUN_API_KEY:-}
+      MAILGUN_DOMAIN: ${MAILGUN_DOMAIN:-}
+      MAILGUN_FROM: ${MAILGUN_FROM:-}
+      MAILGUN_API_BASE: ${MAILGUN_API_BASE:-}
+      PRIVACY_URL: ${PRIVACY_URL:-}
+      PRIVACY_CONTACT: ${PRIVACY_CONTACT:-}
+    ports:
+      - "127.0.0.1:3000:3000"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - moodpulse
+
+volumes:
+  pgdata:
+
+networks:
+  moodpulse:
+    driver: bridge

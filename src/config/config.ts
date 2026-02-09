@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-const emptyToUndefined = (value: unknown) =>
-	value === "" ? undefined : value;
+const emptyToUndefined = (value: unknown) => (value === "" ? undefined : value);
 
 const configSchema = z.object({
 	NODE_ENV: z
@@ -12,15 +11,13 @@ const configSchema = z.object({
 		.startsWith("postgresql://", "Must be a PostgreSQL URL"),
 	BOT_TOKEN: z.string().min(1, "BOT_TOKEN is required"),
 	NOTE_MAX_LENGTH: z.coerce.number().int().positive().default(500),
+	HEALTH_PORT: z.coerce.number().int().positive().default(3000),
 	MAILGUN_API_KEY: z.string().optional(),
 	MAILGUN_DOMAIN: z.string().optional(),
 	MAILGUN_FROM: z.string().optional(),
 	MAILGUN_API_BASE: z.string().optional(),
 	PRIVACY_URL: z.preprocess(emptyToUndefined, z.string().url().optional()),
-	PRIVACY_CONTACT: z.preprocess(
-		emptyToUndefined,
-		z.string().min(1).optional(),
-	),
+	PRIVACY_CONTACT: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
 export type Config = z.infer<typeof configSchema>;
@@ -37,6 +34,7 @@ export function loadConfig(): Config {
 		DATABASE_URL: process.env.DATABASE_URL,
 		BOT_TOKEN: process.env.BOT_TOKEN,
 		NOTE_MAX_LENGTH: process.env.NOTE_MAX_LENGTH,
+		HEALTH_PORT: process.env.HEALTH_PORT,
 		MAILGUN_API_KEY: process.env.MAILGUN_API_KEY,
 		MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
 		MAILGUN_FROM: process.env.MAILGUN_FROM,
