@@ -22,6 +22,8 @@ import {
 import { handleStartCommand } from "./commands/start";
 import {
 	handleStatsCalendar,
+	handleStatsCharts,
+	handleStatsChartsRender,
 	handleStatsCommand,
 	handleStatsEmail,
 	handleStatsEmailPeriod,
@@ -124,6 +126,11 @@ export function createBot(): Bot<BotContext> {
 	bot.callbackQuery("stats:month", handleStatsMonth);
 	bot.callbackQuery("stats:last7", handleStatsLast7);
 	bot.callbackQuery("stats:calendar", handleStatsCalendar);
+	bot.callbackQuery("stats:charts", handleStatsCharts);
+	bot.callbackQuery(
+		/^stats:charts:(week|month|last7)$/,
+		handleStatsChartsRender,
+	);
 	bot.callbackQuery("stats:export", handleStatsExport);
 	bot.callbackQuery("stats:email", handleStatsEmail);
 	bot.callbackQuery(

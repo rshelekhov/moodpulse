@@ -13,6 +13,17 @@ import type { Locale } from "../../lib/i18n";
 import { normalizeLocale, t } from "../../lib/i18n";
 import { createChildLogger } from "../../lib/logger";
 import { findUserByTelegramId } from "../../repositories/checkin.repository";
+import {
+	renderAnxietyIrritabilityChart,
+	renderMedicationChart,
+	renderMoodEnergyChart,
+	renderSleepChart,
+} from "../../services/chart.service";
+import {
+	buildLast7CheckinsSeries,
+	buildMonthSeries,
+	buildWeekSeries,
+} from "../../services/chart-data.service";
 import { isEmailConfigured } from "../../services/email.service";
 import {
 	getCheckinForDate,
@@ -58,6 +69,8 @@ function buildMainMenuKeyboard(locale: Locale): InlineKeyboard {
 	kb.row();
 	kb.text(t("stats_btn_last7", locale, {}), "stats:last7");
 	kb.text(t("stats_btn_calendar", locale, {}), "stats:calendar");
+	kb.row();
+	kb.text(t("stats_btn_charts", locale, {}), "stats:charts");
 	kb.row();
 	kb.text(t("stats_btn_export", locale, {}), "stats:export");
 	if (isEmailConfigured()) {
@@ -650,4 +663,131 @@ export async function handleStatsEmailPeriod(ctx: BotContext): Promise<void> {
 	if (!period) return;
 
 	await ctx.conversation.enter("statsEmail", period);
+}
+
+// ===== Charts sub-screen =====
+
+export async function handleStatsCharts(ctx: BotContext): Promise<void> {
+	await ctx.answerCallbackQuery();
+
+	const locale = normalizeLocale(ctx.from?.language_code);
+
+	const kb = new InlineKeyboard();
+	kb.text(t("stats_btn_week", locale, {}), "stats:charts:week");
+	kb.text(t("stats_btn_month", locale, {}), "stats:charts:month");
+	kb.row();
+	kb.text(t("stats_btn_last7", locale, {}), "stats:charts:last7");
+	kb.row();
+	kb.text(t("stats_btn_back", locale, {}), "stats:menu");
+
+	await ctx.editMessageText(t("stats_charts_title", locale, {}), {
+		reply_markup: kb,
+	});
+}
+
+export async function handleStatsChartsRender(ctx: BotContext): Promise<void> {
+	await ctx.answerCallbackQuery();
+
+	const telegramId = ctx.from?.id;
+	if (!telegramId) return;
+
+	const locale = normalizeLocale(ctx.from?.language_code);
+	const data = ctx.callbackQuery?.data;
+	if (!data) return;
+
+	const period = data.split(":")[2];
+	if (!period) return;
+
+	const tz = await getUserTimezone(telegramId);
+
+	let series: Awaited<ReturnType<typeof buildWeekSeries>> = null;
+	let summaryText: string;
+
+	if (period === "week") {
+		series = await buildWeekSeries(telegramId, tz);
+		if (series) {
+			const stats = await getWeekStats(
+				telegramId,
+				getWeekStartDate(new Date(), tz),
+			);
+			const weekStart = getWeekStartDate(new Date(), tz);
+			const endDate = addDays(weekStart, 6);
+			summaryText =
+				t("week_title", locale, { startDate: weekStart, endDate }) +
+				"\n\n" +
+				(stats && stats.records > 0
+					? t("week_stats", locale, {
+							records: stats.records,
+							totalDays: stats.totalDays,
+							avgMood: String(stats.avgMood),
+							avgEnergy: String(stats.avgEnergy),
+							avgSleep: String(stats.avgSleep),
+							avgAnxiety: String(stats.avgAnxiety),
+							avgIrritability: String(stats.avgIrritability),
+							trend: formatTrend(stats.trend, locale),
+						})
+					: t("week_no_data", locale, {}));
+		} else {
+			summaryText = "";
+		}
+	} else if (period === "month") {
+		series = await buildMonthSeries(telegramId, tz);
+		if (series) {
+			const { year, month } = getLocalYearMonth(new Date(), tz);
+			const stats = await getMonthStats(telegramId, year, month);
+			const intlLocale = locale === "ru" ? "ru-RU" : "en-US";
+			const monthName = getMonthName(year, month, intlLocale);
+			const capitalizedName =
+				monthName.charAt(0).toUpperCase() + monthName.slice(1);
+			summaryText =
+				t("month_title", locale, { monthName: capitalizedName, year }) +
+				"\n\n" +
+				(stats && stats.records > 0
+					? t("month_stats", locale, {
+							records: stats.records,
+							totalDays: stats.totalDays,
+							avgMood: String(stats.avgMood),
+							avgEnergy: String(stats.avgEnergy),
+							avgSleep: String(stats.avgSleep),
+							avgAnxiety: String(stats.avgAnxiety),
+							avgIrritability: String(stats.avgIrritability),
+							trend: formatTrend(stats.trend, locale),
+						})
+					: t("month_no_data", locale, {}));
+		} else {
+			summaryText = "";
+		}
+	} else {
+		series = await buildLast7CheckinsSeries(telegramId);
+		summaryText = series ? t("stats_last7_title", locale, {}) : "";
+	}
+
+	const hasData = series?.mood.some((v) => v !== null);
+
+	if (!hasData) {
+		const kb = new InlineKeyboard();
+		kb.text(t("stats_btn_back", locale, {}), "stats:charts");
+		await ctx.editMessageText(t("stats_charts_no_data", locale, {}), {
+			reply_markup: kb,
+		});
+		return;
+	}
+
+	const backKb = new InlineKeyboard();
+	backKb.text(t("stats_btn_back", locale, {}), "stats:charts");
+	await ctx.editMessageText(summaryText, { reply_markup: backKb });
+
+	const [moodEnergy, sleep, anxietyIrrit, medication] = await Promise.all([
+		renderMoodEnergyChart(series, locale),
+		renderSleepChart(series, locale),
+		renderAnxietyIrritabilityChart(series, locale),
+		renderMedicationChart(series, locale),
+	]);
+
+	await ctx.replyWithPhoto(new InputFile(moodEnergy, "mood-energy.png"));
+	await ctx.replyWithPhoto(new InputFile(sleep, "sleep.png"));
+	await ctx.replyWithPhoto(
+		new InputFile(anxietyIrrit, "anxiety-irritability.png"),
+	);
+	await ctx.replyWithPhoto(new InputFile(medication, "medication.png"));
 }

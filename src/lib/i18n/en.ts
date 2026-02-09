@@ -472,7 +472,7 @@ export const en = {
 	stats_title: (_: Record<string, never>) => "Statistics",
 	stats_btn_week: (_: Record<string, never>) => "Week",
 	stats_btn_month: (_: Record<string, never>) => "Month",
-	stats_btn_last7: (_: Record<string, never>) => "Last 7",
+	stats_btn_last7: (_: Record<string, never>) => "Last 7 check-ins",
 	stats_btn_calendar: (_: Record<string, never>) => "Calendar",
 	stats_btn_export: (_: Record<string, never>) => "Export",
 	stats_btn_email: (_: Record<string, never>) => "Email",
@@ -495,4 +495,24 @@ export const en = {
 	stats_email_not_configured: (_: Record<string, never>) =>
 		"Email sending is not configured.",
 	stats_export_no_data: (_: Record<string, never>) => "No data to export.",
+
+	// ===== CHARTS =====
+	stats_btn_charts: (_: Record<string, never>) => "Charts",
+	stats_charts_title: (_: Record<string, never>) => "Choose a period:",
+	stats_charts_no_data: (_: Record<string, never>) =>
+		"No data for this period.",
+	chart_mood_energy_title: (_: Record<string, never>) => "Mood & Energy",
+	chart_sleep_title: (_: Record<string, never>) => "Sleep",
+	chart_anxiety_irritability_title: (_: Record<string, never>) =>
+		"Anxiety & Irritability",
+	chart_medication_title: (_: Record<string, never>) => "Medication",
+	chart_axis_date: (_: Record<string, never>) => "Date",
+	chart_axis_mood: (_: Record<string, never>) => "Mood",
+	chart_axis_energy: (_: Record<string, never>) => "Energy",
+	chart_axis_sleep: (_: Record<string, never>) => "Sleep (h)",
+	chart_axis_anxiety: (_: Record<string, never>) => "Anxiety",
+	chart_axis_irritability: (_: Record<string, never>) => "Irritability",
+	chart_med_taken: (_: Record<string, never>) => "Taken",
+	chart_med_skipped: (_: Record<string, never>) => "Skipped",
+	chart_med_na: (_: Record<string, never>) => "N/A",
 } as const;

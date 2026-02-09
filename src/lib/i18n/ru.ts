@@ -475,7 +475,7 @@ export const ru = {
 	stats_title: (_: Record<string, never>) => "Статистика",
 	stats_btn_week: (_: Record<string, never>) => "Неделя",
 	stats_btn_month: (_: Record<string, never>) => "Месяц",
-	stats_btn_last7: (_: Record<string, never>) => "Последние 7",
+	stats_btn_last7: (_: Record<string, never>) => "Последние 7 чек-инов",
 	stats_btn_calendar: (_: Record<string, never>) => "Календарь",
 	stats_btn_export: (_: Record<string, never>) => "Экспорт",
 	stats_btn_email: (_: Record<string, never>) => "На почту",
@@ -500,4 +500,24 @@ export const ru = {
 		"Email-отправка не настроена.",
 	stats_export_no_data: (_: Record<string, never>) =>
 		"Нет данных для экспорта.",
+
+	// ===== CHARTS =====
+	stats_btn_charts: (_: Record<string, never>) => "Графики",
+	stats_charts_title: (_: Record<string, never>) => "Выберите период:",
+	stats_charts_no_data: (_: Record<string, never>) =>
+		"Нет данных за этот период.",
+	chart_mood_energy_title: (_: Record<string, never>) => "Настроение и энергия",
+	chart_sleep_title: (_: Record<string, never>) => "Сон",
+	chart_anxiety_irritability_title: (_: Record<string, never>) =>
+		"Тревога и раздражительность",
+	chart_medication_title: (_: Record<string, never>) => "Лекарства",
+	chart_axis_date: (_: Record<string, never>) => "Дата",
+	chart_axis_mood: (_: Record<string, never>) => "Настроение",
+	chart_axis_energy: (_: Record<string, never>) => "Энергия",
+	chart_axis_sleep: (_: Record<string, never>) => "Сон (ч)",
+	chart_axis_anxiety: (_: Record<string, never>) => "Тревога",
+	chart_axis_irritability: (_: Record<string, never>) => "Раздражительность",
+	chart_med_taken: (_: Record<string, never>) => "Принял",
+	chart_med_skipped: (_: Record<string, never>) => "Пропустил",
+	chart_med_na: (_: Record<string, never>) => "Не принимаю",
 } as const;
