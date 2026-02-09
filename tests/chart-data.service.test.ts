@@ -1,9 +1,20 @@
 import { describe, expect, mock, test } from "bun:test";
-import type { MedicationStatus, SleepQuality } from "@prisma/client";
+import type {
+	Checkin,
+	MedicationStatus,
+	SleepQuality,
+	User,
+} from "@prisma/client";
 
-const mockFindUserByTelegramId = mock(() => Promise.resolve(null));
-const mockFindCheckinsByUserIdAndDateRange = mock(() => Promise.resolve([]));
-const mockFindCheckinsByUserIdPaginated = mock(() => Promise.resolve([]));
+const mockFindUserByTelegramId = mock(() =>
+	Promise.resolve(null as User | null),
+);
+const mockFindCheckinsByUserIdAndDateRange = mock(() =>
+	Promise.resolve([] as Checkin[]),
+);
+const mockFindCheckinsByUserIdPaginated = mock(() =>
+	Promise.resolve([] as Checkin[]),
+);
 
 mock.module("../src/repositories/checkin.repository", () => ({
 	findUserByTelegramId: mockFindUserByTelegramId,
@@ -43,6 +54,29 @@ function makeCheckin(
 	};
 }
 
+const fakeUser: User = {
+	id: "user-1",
+	telegramId: BigInt(12345),
+	username: null,
+	firstName: null,
+	lastName: null,
+	languageCode: null,
+	timezone: "UTC",
+	timezoneSetByUser: false,
+	reminderEnabled: false,
+	reminderTime: "21:00",
+	reminderNextAt: null,
+	reminderLastSentLocalDate: null,
+	reminderSnoozeUntil: null,
+	reminderSkipLocalDate: null,
+	alertsEnabled: true,
+	alertsSensitivity: "MEDIUM",
+	alertsSnoozeUntil: null,
+	takingMedications: false,
+	createdAt: new Date(),
+	updatedAt: new Date(),
+};
+
 describe("buildWeekSeries", () => {
 	test("returns null when user not found", async () => {
 		mockFindUserByTelegramId.mockResolvedValueOnce(null);
@@ -51,15 +85,7 @@ describe("buildWeekSeries", () => {
 	});
 
 	test("returns 7 labels with nulls for missing days", async () => {
-		mockFindUserByTelegramId.mockResolvedValueOnce({
-			id: "user-1",
-			telegramId: BigInt(12345),
-			timezone: "UTC",
-			reminderEnabled: false,
-			reminderTime: null,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
+		mockFindUserByTelegramId.mockResolvedValueOnce(fakeUser);
 		mockFindCheckinsByUserIdAndDateRange.mockResolvedValueOnce([
 			makeCheckin("2026-02-09", { mood: 2, energy: 4 }),
 		]);
@@ -82,15 +108,7 @@ describe("buildMonthSeries", () => {
 	});
 
 	test("returns correct label count for the month", async () => {
-		mockFindUserByTelegramId.mockResolvedValueOnce({
-			id: "user-1",
-			telegramId: BigInt(12345),
-			timezone: "UTC",
-			reminderEnabled: false,
-			reminderTime: null,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
+		mockFindUserByTelegramId.mockResolvedValueOnce(fakeUser);
 		mockFindCheckinsByUserIdAndDateRange.mockResolvedValueOnce([]);
 
 		const result = await buildMonthSeries(12345, "UTC");
@@ -108,15 +126,7 @@ describe("buildLast7CheckinsSeries", () => {
 	});
 
 	test("returns null when no checkins", async () => {
-		mockFindUserByTelegramId.mockResolvedValueOnce({
-			id: "user-1",
-			telegramId: BigInt(12345),
-			timezone: "UTC",
-			reminderEnabled: false,
-			reminderTime: null,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
+		mockFindUserByTelegramId.mockResolvedValueOnce(fakeUser);
 		mockFindCheckinsByUserIdPaginated.mockResolvedValueOnce([]);
 
 		const result = await buildLast7CheckinsSeries(12345);
@@ -124,15 +134,7 @@ describe("buildLast7CheckinsSeries", () => {
 	});
 
 	test("returns sorted series without null gaps", async () => {
-		mockFindUserByTelegramId.mockResolvedValueOnce({
-			id: "user-1",
-			telegramId: BigInt(12345),
-			timezone: "UTC",
-			reminderEnabled: false,
-			reminderTime: null,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
+		mockFindUserByTelegramId.mockResolvedValueOnce(fakeUser);
 		const checkins = [
 			makeCheckin("2026-02-08", { mood: -1 }),
 			makeCheckin("2026-02-07", { mood: 1 }),

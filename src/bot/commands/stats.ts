@@ -770,9 +770,7 @@ export async function handleStatsChartsRender(ctx: BotContext): Promise<void> {
 		summaryText = series ? t("stats_last7_title", locale, {}) : "";
 	}
 
-	const hasData = series?.mood.some((v) => v !== null);
-
-	if (!hasData) {
+	if (!series || !series.mood.some((v) => v !== null)) {
 		const kb = new InlineKeyboard();
 		kb.text(t("stats_btn_back", locale, {}), "stats:charts");
 		await ctx.editMessageText(t("stats_charts_no_data", locale, {}), {

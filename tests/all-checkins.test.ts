@@ -1,8 +1,17 @@
 import { describe, expect, mock, test } from "bun:test";
-import type { MedicationStatus, SleepQuality } from "@prisma/client";
+import type {
+	Checkin,
+	MedicationStatus,
+	SleepQuality,
+	User,
+} from "@prisma/client";
 
-const mockFindUserByTelegramId = mock(() => Promise.resolve(null));
-const mockFindAllCheckinsByUserId = mock(() => Promise.resolve([]));
+const mockFindUserByTelegramId = mock(() =>
+	Promise.resolve(null as User | null),
+);
+const mockFindAllCheckinsByUserId = mock(() =>
+	Promise.resolve([] as Checkin[]),
+);
 
 mock.module("../src/repositories/checkin.repository", () => ({
 	findUserByTelegramId: mockFindUserByTelegramId,
@@ -43,12 +52,25 @@ function makeCheckin(
 	};
 }
 
-const fakeUser = {
+const fakeUser: User = {
 	id: "user-1",
 	telegramId: BigInt(12345),
+	username: null,
+	firstName: null,
+	lastName: null,
+	languageCode: null,
 	timezone: "UTC",
+	timezoneSetByUser: false,
 	reminderEnabled: false,
-	reminderTime: null,
+	reminderTime: "21:00",
+	reminderNextAt: null,
+	reminderLastSentLocalDate: null,
+	reminderSnoozeUntil: null,
+	reminderSkipLocalDate: null,
+	alertsEnabled: true,
+	alertsSensitivity: "MEDIUM",
+	alertsSnoozeUntil: null,
+	takingMedications: false,
 	createdAt: new Date(),
 	updatedAt: new Date(),
 };
