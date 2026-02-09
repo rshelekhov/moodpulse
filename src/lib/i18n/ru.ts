@@ -520,4 +520,61 @@ export const ru = {
 	chart_med_taken: (_: Record<string, never>) => "Принял",
 	chart_med_skipped: (_: Record<string, never>) => "Пропустил",
 	chart_med_na: (_: Record<string, never>) => "Не принимаю",
+
+	// ===== SETTINGS =====
+	settings_title: (_: Record<string, never>) => "Настройки",
+	settings_alerts_status: ({
+		enabled,
+		sensitivity,
+	}: {
+		enabled: boolean;
+		sensitivity: string;
+	}) =>
+		`Умные алерты: ${enabled ? "включены" : "выключены"}\n` +
+		`Чувствительность: ${sensitivity}`,
+	settings_btn_alerts_on: (_: Record<string, never>) => "Алерты: вкл",
+	settings_btn_alerts_off: (_: Record<string, never>) => "Алерты: выкл",
+	settings_btn_sensitivity_low: (_: Record<string, never>) => "Низкая",
+	settings_btn_sensitivity_medium: (_: Record<string, never>) => "Средняя",
+	settings_btn_sensitivity_high: (_: Record<string, never>) => "Высокая",
+	settings_sensitivity_current: ({ level }: { level: string }) => `• ${level}`,
+	settings_updated: (_: Record<string, never>) => "Настройки обновлены.",
+
+	// ===== SMART ALERTS =====
+	alert_sleep_energy: ({
+		days,
+		sleepInfo,
+		energyInfo,
+	}: {
+		days: number;
+		sleepInfo: string;
+		energyInfo: string;
+	}) =>
+		`Заметила, что последние ${days} дн. сон короче обычного (${sleepInfo}), а энергия повышена (${energyInfo}). Такое сочетание бывает стоит отметить.`,
+	alert_missed_meds: ({ count }: { count: number }) =>
+		`За последнюю неделю лекарства были пропущены ${count} раз(а). Если это не по плану — возможно, стоит обратить внимание.`,
+	alert_mood_swing: ({ diff, days }: { diff: number; days: number }) =>
+		`Настроение заметно изменилось (на ${diff} пунктов за ${days} дн.). Это просто наблюдение — иногда полезно отследить контекст.`,
+	alert_mood_downtrend: ({
+		days,
+		fromMood,
+		toMood,
+	}: {
+		days: number;
+		fromMood: number;
+		toMood: number;
+	}) =>
+		`Настроение снижается ${days} дн. подряд (${fromMood > 0 ? "+" : ""}${fromMood} → ${toMood > 0 ? "+" : ""}${toMood}). Мягкое напоминание — обрати внимание на себя.`,
+	alert_irritability_energy: ({
+		days,
+		irritabilityInfo,
+		energyInfo,
+	}: {
+		days: number;
+		irritabilityInfo: string;
+		energyInfo: string;
+	}) =>
+		`Последние ${days} дн. раздражительность (${irritabilityInfo}) и энергия (${energyInfo}) выше обычного. Это может быть сигналом — стоит понаблюдать.`,
+	alert_disclaimer: (_: Record<string, never>) =>
+		"ℹ️ Это наблюдение, а не диагноз. При сомнениях — обратись к специалисту.",
 } as const;

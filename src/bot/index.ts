@@ -19,6 +19,11 @@ import {
 	handleReminderSkip,
 	handleReminderSnooze,
 } from "./commands/reminder-callbacks";
+import {
+	handleSettingsAlertToggle,
+	handleSettingsCommand,
+	handleSettingsSensitivity,
+} from "./commands/settings";
 import { handleStartCommand } from "./commands/start";
 import {
 	handleStatsCalendar,
@@ -117,6 +122,7 @@ export function createBot(): Bot<BotContext> {
 	bot.command("today", handleTodayCommand);
 	bot.command("stats", handleStatsCommand);
 	bot.command("reminder", handleReminderCommand);
+	bot.command("settings", handleSettingsCommand);
 
 	bot.callbackQuery("today:start_checkin", handleTodayStartCheckin);
 
@@ -173,6 +179,13 @@ export function createBot(): Bot<BotContext> {
 		await ctx.answerCallbackQuery();
 		await ctx.conversation.enter("timezone");
 	});
+
+	// Settings callbacks
+	bot.callbackQuery("settings:alerts:toggle", handleSettingsAlertToggle);
+	bot.callbackQuery(
+		/^settings:sensitivity:(low|medium|high)$/,
+		handleSettingsSensitivity,
+	);
 
 	// Standalone timezone callbacks
 	bot.callbackQuery(/^tz:set:.+$/, handleTimezoneSelect);

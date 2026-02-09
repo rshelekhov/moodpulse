@@ -1,6 +1,7 @@
 import type { MedicationStatus, SleepQuality } from "@prisma/client";
 import { normalizeLocale, t } from "../../lib/i18n";
 import { createChildLogger } from "../../lib/logger";
+import { analyzeAfterCheckin } from "../../services/alerts/analysis.service";
 import {
 	type CheckinData,
 	getTodayCheckin,
@@ -168,4 +169,11 @@ export async function checkinConversation(
 
 	await ctx.reply(t("checkin_saved", locale, {}));
 	logger.info({ telegramId }, "Checkin saved successfully");
+
+	const alerts = await conversation.external(() =>
+		analyzeAfterCheckin(telegramId, locale),
+	);
+	for (const alert of alerts) {
+		await ctx.reply(alert.text);
+	}
 }

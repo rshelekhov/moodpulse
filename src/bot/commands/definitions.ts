@@ -11,6 +11,7 @@ const commands: BotCommand[] = [
 	{ command: "today", description: "Show today's check-in" },
 	{ command: "stats", description: "Statistics, export & calendar" },
 	{ command: "reminder", description: "Reminder settings" },
+	{ command: "settings", description: "Alert settings" },
 ];
 
 const commandsRu: BotCommand[] = [
@@ -19,6 +20,7 @@ const commandsRu: BotCommand[] = [
 	{ command: "today", description: "Показать чек-ин за сегодня" },
 	{ command: "stats", description: "Статистика, экспорт и календарь" },
 	{ command: "reminder", description: "Настройки напоминаний" },
+	{ command: "settings", description: "Настройки алертов" },
 ];
 
 export async function setBotCommands(bot: Bot<BotContext>): Promise<void> {

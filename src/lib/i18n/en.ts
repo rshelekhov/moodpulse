@@ -515,4 +515,60 @@ export const en = {
 	chart_med_taken: (_: Record<string, never>) => "Taken",
 	chart_med_skipped: (_: Record<string, never>) => "Skipped",
 	chart_med_na: (_: Record<string, never>) => "N/A",
+
+	// ===== SETTINGS =====
+	settings_title: (_: Record<string, never>) => "Settings",
+	settings_alerts_status: ({
+		enabled,
+		sensitivity,
+	}: {
+		enabled: boolean;
+		sensitivity: string;
+	}) =>
+		`Smart alerts: ${enabled ? "on" : "off"}\n` + `Sensitivity: ${sensitivity}`,
+	settings_btn_alerts_on: (_: Record<string, never>) => "Alerts: on",
+	settings_btn_alerts_off: (_: Record<string, never>) => "Alerts: off",
+	settings_btn_sensitivity_low: (_: Record<string, never>) => "Low",
+	settings_btn_sensitivity_medium: (_: Record<string, never>) => "Medium",
+	settings_btn_sensitivity_high: (_: Record<string, never>) => "High",
+	settings_sensitivity_current: ({ level }: { level: string }) => `• ${level}`,
+	settings_updated: (_: Record<string, never>) => "Settings updated.",
+
+	// ===== SMART ALERTS =====
+	alert_sleep_energy: ({
+		days,
+		sleepInfo,
+		energyInfo,
+	}: {
+		days: number;
+		sleepInfo: string;
+		energyInfo: string;
+	}) =>
+		`I noticed that over the past ${days} days sleep has been shorter (${sleepInfo}) while energy is elevated (${energyInfo}). This combination can be worth noting.`,
+	alert_missed_meds: ({ count }: { count: number }) =>
+		`Medication was skipped ${count} time(s) in the past week. If this wasn't planned — it might be worth paying attention to.`,
+	alert_mood_swing: ({ diff, days }: { diff: number; days: number }) =>
+		`Your mood shifted notably (${diff} points over ${days} day(s)). Just an observation — sometimes it helps to note the context.`,
+	alert_mood_downtrend: ({
+		days,
+		fromMood,
+		toMood,
+	}: {
+		days: number;
+		fromMood: number;
+		toMood: number;
+	}) =>
+		`Mood has been declining for ${days} days in a row (${fromMood > 0 ? "+" : ""}${fromMood} → ${toMood > 0 ? "+" : ""}${toMood}). A gentle reminder — take care of yourself.`,
+	alert_irritability_energy: ({
+		days,
+		irritabilityInfo,
+		energyInfo,
+	}: {
+		days: number;
+		irritabilityInfo: string;
+		energyInfo: string;
+	}) =>
+		`Over the past ${days} days irritability (${irritabilityInfo}) and energy (${energyInfo}) have been higher than usual. This could be a signal — worth keeping an eye on.`,
+	alert_disclaimer: (_: Record<string, never>) =>
+		"ℹ️ This is an observation, not a diagnosis. If in doubt — consult a specialist.",
 } as const;

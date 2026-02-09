@@ -26,10 +26,15 @@ model User {
   reminderSnoozeUntil     DateTime?
   reminderSkipLocalDate   String?
 
+  alertsEnabled     Boolean          @default(true)
+  alertsSensitivity AlertSensitivity @default(MEDIUM)
+  alertsSnoozeUntil DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  checkins Checkin[]
+  checkins    Checkin[]
+  alertStates AlertState[]
 
   @@index([reminderEnabled, reminderNextAt])
 }
@@ -80,4 +85,21 @@ enum MedicationStatus {
   TAKEN
   SKIPPED
   NOT_APPLICABLE
+}
+
+enum AlertSensitivity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model AlertState {
+  id            String    @id @default(uuid())
+  userId        String
+  ruleId        String
+  lastSentAt    DateTime?
+  cooldownUntil DateTime?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ruleId])
 }
