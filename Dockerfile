@@ -24,6 +24,7 @@ WORKDIR /app
 
 COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
+COPY --from=build /app/node_modules/prisma node_modules/prisma
 COPY package.json prisma.config.ts ./
 COPY src src
 COPY scripts/entrypoint.sh scripts/entrypoint.sh
