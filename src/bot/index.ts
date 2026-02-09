@@ -7,6 +7,12 @@ import { createChildLogger } from "../lib/logger";
 import { handleCheckinCommand } from "./commands/checkin";
 import { setBotCommands } from "./commands/definitions";
 import {
+	handleDeleteMeCancel,
+	handleDeleteMeCommand,
+	handleDeleteMeConfirm,
+} from "./commands/delete-me";
+import { handlePrivacyCommand } from "./commands/privacy";
+import {
 	handleReminderCommand,
 	handleReminderSettingsTz,
 	handleReminderTimePreset,
@@ -123,6 +129,8 @@ export function createBot(): Bot<BotContext> {
 	bot.command("stats", handleStatsCommand);
 	bot.command("reminder", handleReminderCommand);
 	bot.command("settings", handleSettingsCommand);
+	bot.command("privacy", handlePrivacyCommand);
+	bot.command("delete_me", handleDeleteMeCommand);
 
 	bot.callbackQuery("today:start_checkin", handleTodayStartCheckin);
 
@@ -140,11 +148,11 @@ export function createBot(): Bot<BotContext> {
 	bot.callbackQuery("stats:export", handleStatsExport);
 	bot.callbackQuery("stats:email", handleStatsEmail);
 	bot.callbackQuery(
-		/^stats:export:pick:(week|month|last7)$/,
+		/^stats:export:pick:(week|month|last7|all)$/,
 		handleStatsExportPick,
 	);
 	bot.callbackQuery(
-		/^stats:export:(csv|xlsx):(week|month|last7)/,
+		/^stats:export:(csv|xlsx):(week|month|last7|all)/,
 		handleStatsExportFile,
 	);
 	bot.callbackQuery(/^stats:email:(week|month|last7)$/, handleStatsEmailPeriod);
@@ -154,6 +162,10 @@ export function createBot(): Bot<BotContext> {
 	bot.callbackQuery(/^stats:month:back:/, handleStatsMonthBack);
 	bot.callbackQuery(/^stats:month:checkin:/, handleStatsMonthCheckin);
 	bot.callbackQuery("stats:noop", async (ctx) => ctx.answerCallbackQuery());
+
+	// Account deletion
+	bot.callbackQuery("delete_me:confirm", handleDeleteMeConfirm);
+	bot.callbackQuery("delete_me:cancel", handleDeleteMeCancel);
 
 	// Reminder notification buttons
 	bot.callbackQuery("reminder:checkin", handleReminderCheckin);

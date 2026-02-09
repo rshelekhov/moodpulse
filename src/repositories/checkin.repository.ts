@@ -84,6 +84,28 @@ export async function findCheckinsByUserIdAndDateRange(
 	});
 }
 
+export async function findAllCheckinsByUserId(userId: string) {
+	const batchSize = 500;
+	const all: Awaited<ReturnType<typeof prisma.checkin.findMany>> = [];
+	let cursor: string | undefined;
+
+	for (;;) {
+		const batch = await prisma.checkin.findMany({
+			where: { userId },
+			orderBy: { localDate: "asc" },
+			take: batchSize,
+			...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+		});
+		if (batch.length === 0) break;
+		all.push(...batch);
+		const last = batch.at(-1);
+		if (!last || batch.length < batchSize) break;
+		cursor = last.id;
+	}
+
+	return all;
+}
+
 export async function findUserByTelegramId(telegramId: bigint) {
 	return prisma.user.findUnique({
 		where: { telegramId },

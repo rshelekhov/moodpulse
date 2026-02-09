@@ -111,3 +111,9 @@ export async function findUserByTelegramIdFull(telegramId: bigint) {
 		},
 	});
 }
+
+export async function deleteUserByTelegramId(telegramId: bigint) {
+	return prisma.user.deleteMany({
+		where: { telegramId },
+	});
+}

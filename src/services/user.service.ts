@@ -1,4 +1,7 @@
-import { upsertUserByTelegramId } from "../repositories/user.repository";
+import {
+	deleteUserByTelegramId as deleteUserByTelegramIdRepo,
+	upsertUserByTelegramId,
+} from "../repositories/user.repository";
 
 export type TelegramUserInput = {
 	telegramId: number;
@@ -16,4 +19,11 @@ export async function createOrUpdateUserFromTelegram(input: TelegramUserInput) {
 		lastName: input.lastName,
 		languageCode: input.languageCode,
 	});
+}
+
+export async function deleteUserByTelegramId(
+	telegramId: number,
+): Promise<boolean> {
+	const result = await deleteUserByTelegramIdRepo(BigInt(telegramId));
+	return result.count > 0;
 }

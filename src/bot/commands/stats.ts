@@ -26,6 +26,7 @@ import {
 } from "../../services/chart-data.service";
 import { isEmailConfigured } from "../../services/email.service";
 import {
+	getAllCheckins,
 	getCheckinForDate,
 	getCheckinHistory,
 	getLast7CheckinsWithStats,
@@ -522,7 +523,9 @@ export async function handleStatsExport(ctx: BotContext): Promise<void> {
 	const kb = new InlineKeyboard();
 	kb.text(t("stats_btn_week", locale, {}), "stats:export:pick:week");
 	kb.text(t("stats_btn_month", locale, {}), "stats:export:pick:month");
+	kb.row();
 	kb.text(t("stats_btn_last7", locale, {}), "stats:export:pick:last7");
+	kb.text(t("stats_btn_all", locale, {}), "stats:export:pick:all");
 	kb.row();
 	kb.text(t("stats_btn_back", locale, {}), "stats:menu");
 
@@ -553,6 +556,11 @@ export async function handleStatsExportPick(ctx: BotContext): Promise<void> {
 }
 
 async function fetchExportData(telegramId: number, period: string, tz: string) {
+	if (period === "all") {
+		const checkins = await getAllCheckins(telegramId);
+		if (!checkins) return null;
+		return { checkins, stats: null };
+	}
 	if (period === "last7") {
 		const result = await getLast7CheckinsWithStats(telegramId);
 		if (!result) return null;

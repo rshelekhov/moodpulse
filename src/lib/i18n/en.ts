@@ -3,8 +3,35 @@ export const en = {
 		`Hi, ${name}! I'm MoodPulse — a gentle self‑tracking diary for people living with bipolar disorder.\n\n` +
 		`I'll help you quickly log mood, energy, sleep, and key signals, so you can notice changes over time.\n\n` +
 		`This isn't a diagnosis or a substitute for care — it's a supportive way to keep track. When you're ready, type /checkin and we'll begin.`,
+	privacy: ({ contact, url }: { contact?: string; url?: string }) => {
+		const contactLine = contact
+			? `Contact: ${contact}`
+			: "Contact: the bot owner";
+		const urlLine = url ? `\nFull policy: ${url}` : "";
+		return (
+			"Privacy summary\n\n" +
+			"- We store Telegram profile data, check-ins, settings, and usage logs.\n" +
+			"- If you request email reports, we use the email only to send the report and do not store it.\n" +
+			"- Data is stored in our database; Telegram delivers messages; Mailgun sends email reports.\n" +
+			"- No fixed retention period. You can delete your data anytime via /delete_me.\n\n" +
+			contactLine +
+			"." +
+			urlLine
+		);
+	},
 	error_generic: (_: Record<string, never>) =>
 		"Something went wrong on my side. I'll try again, and you can repeat the command. If it keeps happening, please try a bit later.",
+	delete_prompt: (_: Record<string, never>) =>
+		"This will permanently delete your MoodPulse data (check-ins, settings, alerts). Are you sure?",
+	delete_btn_confirm: (_: Record<string, never>) => "Yes, delete",
+	delete_btn_cancel: (_: Record<string, never>) => "Cancel",
+	delete_done: (_: Record<string, never>) =>
+		"Your data has been deleted. You can use /start to begin again.",
+	delete_cancelled: (_: Record<string, never>) => "Deletion cancelled.",
+	delete_private_only: (_: Record<string, never>) =>
+		"Please use this command in a private chat with me.",
+	delete_not_found: (_: Record<string, never>) =>
+		"I couldn't find any data for your account.",
 
 	// ===== CHECKIN: Existing record found =====
 	checkin_existing: ({
@@ -473,6 +500,7 @@ export const en = {
 	stats_btn_week: (_: Record<string, never>) => "Week",
 	stats_btn_month: (_: Record<string, never>) => "Month",
 	stats_btn_last7: (_: Record<string, never>) => "Last 7 check-ins",
+	stats_btn_all: (_: Record<string, never>) => "All time",
 	stats_btn_calendar: (_: Record<string, never>) => "Calendar",
 	stats_btn_export: (_: Record<string, never>) => "Export",
 	stats_btn_email: (_: Record<string, never>) => "Email",
@@ -526,8 +554,8 @@ export const en = {
 		sensitivity: string;
 	}) =>
 		`Smart alerts: ${enabled ? "on" : "off"}\n` + `Sensitivity: ${sensitivity}`,
-	settings_btn_alerts_on: (_: Record<string, never>) => "Alerts: on",
-	settings_btn_alerts_off: (_: Record<string, never>) => "Alerts: off",
+	settings_btn_alerts_on: (_: Record<string, never>) => "Turn on alerts",
+	settings_btn_alerts_off: (_: Record<string, never>) => "Turn off alerts",
 	settings_btn_sensitivity_low: (_: Record<string, never>) => "Low",
 	settings_btn_sensitivity_medium: (_: Record<string, never>) => "Medium",
 	settings_btn_sensitivity_high: (_: Record<string, never>) => "High",

@@ -1,5 +1,6 @@
 import { addDays, getDateRange, getMonthBounds } from "../lib/date";
 import {
+	findAllCheckinsByUserId,
 	findCheckinByUserIdAndLocalDate,
 	findCheckinsByUserIdAndDateRange,
 	findCheckinsByUserIdPaginated,
@@ -189,4 +190,12 @@ export async function getLast7CheckinsWithStats(telegramId: number) {
 	const dates = checkins.map((c) => c.localDate).sort();
 	const stats = computeStats(checkins, dates, "week");
 	return { checkins, stats };
+}
+
+export async function getAllCheckins(telegramId: number) {
+	const user = await findUserByTelegramId(BigInt(telegramId));
+	if (!user) return null;
+
+	const checkins = await findAllCheckinsByUserId(user.id);
+	return checkins;
 }

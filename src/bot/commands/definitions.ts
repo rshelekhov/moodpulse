@@ -12,6 +12,8 @@ const commands: BotCommand[] = [
 	{ command: "stats", description: "Statistics, export & calendar" },
 	{ command: "reminder", description: "Reminder settings" },
 	{ command: "settings", description: "Alert settings" },
+	{ command: "privacy", description: "Privacy policy" },
+	{ command: "delete_me", description: "Delete my data" },
 ];
 
 const commandsRu: BotCommand[] = [
@@ -21,6 +23,8 @@ const commandsRu: BotCommand[] = [
 	{ command: "stats", description: "Статистика, экспорт и календарь" },
 	{ command: "reminder", description: "Настройки напоминаний" },
 	{ command: "settings", description: "Настройки алертов" },
+	{ command: "privacy", description: "Политика приватности" },
+	{ command: "delete_me", description: "Удалить мои данные" },
 ];
 
 export async function setBotCommands(bot: Bot<BotContext>): Promise<void> {

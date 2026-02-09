@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+const emptyToUndefined = (value: unknown) =>
+	value === "" ? undefined : value;
+
 const configSchema = z.object({
 	NODE_ENV: z
 		.enum(["development", "production", "test"])
@@ -13,6 +16,11 @@ const configSchema = z.object({
 	MAILGUN_DOMAIN: z.string().optional(),
 	MAILGUN_FROM: z.string().optional(),
 	MAILGUN_API_BASE: z.string().optional(),
+	PRIVACY_URL: z.preprocess(emptyToUndefined, z.string().url().optional()),
+	PRIVACY_CONTACT: z.preprocess(
+		emptyToUndefined,
+		z.string().min(1).optional(),
+	),
 });
 
 export type Config = z.infer<typeof configSchema>;
@@ -33,6 +41,8 @@ export function loadConfig(): Config {
 		MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
 		MAILGUN_FROM: process.env.MAILGUN_FROM,
 		MAILGUN_API_BASE: process.env.MAILGUN_API_BASE,
+		PRIVACY_URL: process.env.PRIVACY_URL,
+		PRIVACY_CONTACT: process.env.PRIVACY_CONTACT,
 	});
 
 	if (!result.success) {

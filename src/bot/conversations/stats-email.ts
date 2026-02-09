@@ -111,9 +111,9 @@ export async function statsEmailConversation(
 		);
 
 		await ctx.reply(t("stats_email_sent", locale, { email }));
-		logger.info({ telegramId, email, period }, "Report email sent");
+		logger.info({ telegramId, period }, "Report email sent");
 	} catch (error) {
-		logger.error({ telegramId, email, error }, "Failed to send report email");
+		logger.error({ telegramId, error }, "Failed to send report email");
 		await ctx.reply(t("stats_email_error", locale, {}));
 	}
 }

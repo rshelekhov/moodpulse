@@ -3,8 +3,35 @@ export const ru = {
 		`Привет, ${name}! Я MoodPulse — тёплый дневник самонаблюдения для людей с БАР.\n\n` +
 		`Я помогу быстро отмечать настроение, энергию, сон и важные сигналы, чтобы мягко замечать изменения во времени.\n\n` +
 		`Это не диагностика и не замена врача, а удобный способ бережно следить за собой. Когда будешь готов(а), напиши /checkin и начнём.`,
+	privacy: ({ contact, url }: { contact?: string; url?: string }) => {
+		const contactLine = contact
+			? `Контакт: ${contact}`
+			: "Контакт: владелец бота";
+		const urlLine = url ? `\nПолная политика: ${url}` : "";
+		return (
+			"Кратко о приватности\n\n" +
+			"- Мы храним данные Telegram-профиля, чек-ины, настройки и логи использования.\n" +
+			"- Если вы запрашиваете отчёт на почту, email используется только для отправки и не сохраняется.\n" +
+			"- Данные хранятся в нашей базе; Telegram доставляет сообщения; Mailgun отправляет отчёты.\n" +
+			"- Фиксированного срока хранения нет. Удалить данные можно командой /delete_me.\n\n" +
+			contactLine +
+			"." +
+			urlLine
+		);
+	},
 	error_generic: (_: Record<string, never>) =>
 		"Похоже, что-то пошло не так. Я попробую снова, а ты можешь повторить команду. Если проблема повторится, напиши чуть позже.",
+	delete_prompt: (_: Record<string, never>) =>
+		"Это навсегда удалит ваши данные MoodPulse (чек-ины, настройки, алерты). Продолжить?",
+	delete_btn_confirm: (_: Record<string, never>) => "Да, удалить",
+	delete_btn_cancel: (_: Record<string, never>) => "Отмена",
+	delete_done: (_: Record<string, never>) =>
+		"Ваши данные удалены. Можно начать заново с /start.",
+	delete_cancelled: (_: Record<string, never>) => "Удаление отменено.",
+	delete_private_only: (_: Record<string, never>) =>
+		"Пожалуйста, используйте эту команду в личном чате со мной.",
+	delete_not_found: (_: Record<string, never>) =>
+		"Я не нашёл данных для вашего аккаунта.",
 
 	// ===== CHECKIN: Existing record found =====
 	checkin_existing: ({
@@ -476,6 +503,7 @@ export const ru = {
 	stats_btn_week: (_: Record<string, never>) => "Неделя",
 	stats_btn_month: (_: Record<string, never>) => "Месяц",
 	stats_btn_last7: (_: Record<string, never>) => "Последние 7 чек-инов",
+	stats_btn_all: (_: Record<string, never>) => "За всё время",
 	stats_btn_calendar: (_: Record<string, never>) => "Календарь",
 	stats_btn_export: (_: Record<string, never>) => "Экспорт",
 	stats_btn_email: (_: Record<string, never>) => "На почту",
@@ -532,8 +560,8 @@ export const ru = {
 	}) =>
 		`Умные алерты: ${enabled ? "включены" : "выключены"}\n` +
 		`Чувствительность: ${sensitivity}`,
-	settings_btn_alerts_on: (_: Record<string, never>) => "Алерты: вкл",
-	settings_btn_alerts_off: (_: Record<string, never>) => "Алерты: выкл",
+	settings_btn_alerts_on: (_: Record<string, never>) => "Включить алерты",
+	settings_btn_alerts_off: (_: Record<string, never>) => "Выключить алерты",
 	settings_btn_sensitivity_low: (_: Record<string, never>) => "Низкая",
 	settings_btn_sensitivity_medium: (_: Record<string, never>) => "Средняя",
 	settings_btn_sensitivity_high: (_: Record<string, never>) => "Высокая",
