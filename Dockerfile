@@ -27,6 +27,7 @@ COPY package.json ./
 COPY src src
 COPY scripts/entrypoint.sh scripts/entrypoint.sh
 
+RUN chown -R bun:bun /app
 USER bun
 EXPOSE 3000
 
