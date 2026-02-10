@@ -22,14 +22,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY --from=deps /app/node_modules node_modules
-COPY --from=build /app/node_modules/.prisma node_modules/.prisma
-COPY --from=build /app/node_modules/prisma node_modules/prisma
-COPY package.json prisma.config.ts ./
-COPY src src
-COPY scripts/entrypoint.sh scripts/entrypoint.sh
+COPY --from=deps --chown=bun:bun /app/node_modules node_modules
+COPY --from=build --chown=bun:bun /app/node_modules/.prisma node_modules/.prisma
+COPY --from=build --chown=bun:bun /app/node_modules/prisma node_modules/prisma
+COPY --chown=bun:bun package.json prisma.config.ts ./
+COPY --chown=bun:bun src src
+COPY --chown=bun:bun scripts/entrypoint.sh scripts/entrypoint.sh
 
-RUN chown -R bun:bun /app
 USER bun
 EXPOSE 3000
 
