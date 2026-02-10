@@ -1,5 +1,7 @@
 # MoodPulse
 
+**[@moodpulse_tracker_bot](https://t.me/moodpulse_tracker_bot)**
+
 MoodPulse is a Telegram bot that helps people with bipolar disorder track daily signals like mood, energy, sleep, anxiety, irritability, and medication. It keeps the process quick, collects optional notes, and can visualize trends so early warning patterns are easier to spot.
 
 MoodPulse is a self-observation tool, not a medical device. It does not diagnose or replace care from a licensed clinician.
