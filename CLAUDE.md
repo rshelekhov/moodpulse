@@ -220,3 +220,14 @@ BOT_TOKEN="your-bot-token"
 - [Hono docs](https://hono.dev/)
 - [Bun docs](https://bun.sh/docs)
 - [Chart.js docs](https://www.chartjs.org/docs/)
+
+<!-- agent-memory-kit:start -->
+# Persistent Memory Workflow
+Before substantial work, run:
+`/Users/rs/github.com/agent-memory-kit/.venv/bin/mem recall "<task summary>" --db /Users/rs/github.com/moodpulse/.memory-kit/memory.db`
+
+After completing work, save a summary:
+`/Users/rs/github.com/agent-memory-kit/.venv/bin/mem commit --kind worklog --title "<what changed>" --from-stdin --agent claude --db /Users/rs/github.com/moodpulse/.memory-kit/memory.db`
+
+Use `--kind decision` for architecture choices and `--kind fact --fact-key` for stable repository facts.
+<!-- agent-memory-kit:end -->

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:deepwiki.com)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/rs/github.com/agent-memory-kit/.venv/bin/python /Users/rs/github.com/moodpulse/.claude/hooks/memory_recall_hook.py"
+          }
+        ]
+      }
+    ]
+  }
+}
