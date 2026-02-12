@@ -1,16 +1,14 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 
-// biome-ignore lint/suspicious/noExplicitAny: mocks need flexible return types
 const mockFindUserAlertSettings = mock(
-	(): Promise<any> => Promise.resolve(null),
+	(): Promise<unknown> => Promise.resolve(null),
 );
-// biome-ignore lint/suspicious/noExplicitAny: mocks need flexible return types
-const mockFindAlertState = mock((): Promise<any> => Promise.resolve(null));
-// biome-ignore lint/suspicious/noExplicitAny: mocks need flexible return types
-const mockUpsertAlertCooldown = mock((): Promise<any> => Promise.resolve(null));
-// biome-ignore lint/suspicious/noExplicitAny: mocks need flexible return types
+const mockFindAlertState = mock((): Promise<unknown> => Promise.resolve(null));
+const mockUpsertAlertCooldown = mock(
+	(): Promise<unknown> => Promise.resolve(null),
+);
 const mockFindCheckinsByUserIdAndDateRange = mock(
-	(): Promise<any> => Promise.resolve([]),
+	(): Promise<unknown> => Promise.resolve([]),
 );
 
 mock.module("../src/repositories/alert.repository", () => ({

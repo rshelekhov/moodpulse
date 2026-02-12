@@ -70,6 +70,13 @@ function getYesterdayLocalDate(): string {
 	return yesterday.toISOString().slice(0, 10);
 }
 
+function getRequiredTestUserId(): string {
+	if (!testUserId) {
+		throw new Error("testUserId is not initialized");
+	}
+	return testUserId;
+}
+
 describe("checkin.repository integration", () => {
 	describe("findUserByTelegramId", () => {
 		test("returns user when exists", async () => {
@@ -91,7 +98,7 @@ describe("checkin.repository integration", () => {
 		test("creates checkin with all fields", async () => {
 			const localDate = getTodayLocalDate();
 			const checkinData = {
-				userId: testUserId!,
+				userId: getRequiredTestUserId(),
 				mood: -1,
 				energy: 2,
 				sleepDuration: 6.5,
@@ -107,7 +114,7 @@ describe("checkin.repository integration", () => {
 			testCheckinIds.push(checkin.id);
 
 			expect(checkin.id).toBeDefined();
-			expect(checkin.userId).toBe(testUserId!);
+			expect(checkin.userId).toBe(getRequiredTestUserId());
 			expect(checkin.mood).toBe(-1);
 			expect(checkin.energy).toBe(2);
 			expect(checkin.sleepDuration).toBe(6.5);
@@ -121,7 +128,7 @@ describe("checkin.repository integration", () => {
 
 		test("creates checkin with null note", async () => {
 			const checkinData = {
-				userId: testUserId!,
+				userId: getRequiredTestUserId(),
 				mood: 0,
 				energy: 3,
 				sleepDuration: 7,
@@ -142,7 +149,7 @@ describe("checkin.repository integration", () => {
 		test("enforces unique constraint on userId + localDate", async () => {
 			const localDate = getTodayLocalDate();
 			const checkin1 = await createCheckin({
-				userId: testUserId!,
+				userId: getRequiredTestUserId(),
 				mood: 0,
 				energy: 3,
 				sleepDuration: 7,
@@ -156,7 +163,7 @@ describe("checkin.repository integration", () => {
 
 			await expect(
 				createCheckin({
-					userId: testUserId!,
+					userId: getRequiredTestUserId(),
 					mood: 1,
 					energy: 4,
 					sleepDuration: 8,
@@ -174,7 +181,7 @@ describe("checkin.repository integration", () => {
 		test("returns checkin when exists", async () => {
 			const localDate = getTodayLocalDate();
 			const created = await createCheckin({
-				userId: testUserId!,
+				userId: getRequiredTestUserId(),
 				mood: 2,
 				energy: 4,
 				sleepDuration: 8,
@@ -187,7 +194,7 @@ describe("checkin.repository integration", () => {
 			testCheckinIds.push(created.id);
 
 			const found = await findCheckinByUserIdAndLocalDate(
-				testUserId!,
+				getRequiredTestUserId(),
 				localDate,
 			);
 
@@ -199,7 +206,7 @@ describe("checkin.repository integration", () => {
 		test("returns null when no checkin for that localDate", async () => {
 			const localDate = getTodayLocalDate();
 			const created = await createCheckin({
-				userId: testUserId!,
+				userId: getRequiredTestUserId(),
 				mood: 0,
 				energy: 3,
 				sleepDuration: 7,
@@ -212,7 +219,7 @@ describe("checkin.repository integration", () => {
 			testCheckinIds.push(created.id);
 
 			const found = await findCheckinByUserIdAndLocalDate(
-				testUserId!,
+				getRequiredTestUserId(),
 				getYesterdayLocalDate(),
 			);
 
@@ -233,7 +240,7 @@ describe("checkin.repository integration", () => {
 		test("updates specified fields only", async () => {
 			const localDate = getTodayLocalDate();
 			const checkin = await createCheckin({
-				userId: testUserId!,
+				userId: getRequiredTestUserId(),
 				mood: 0,
 				energy: 3,
 				sleepDuration: 7,
@@ -248,7 +255,7 @@ describe("checkin.repository integration", () => {
 
 			const updateResult = await updateCheckinByIdForUser(
 				checkin.id,
-				testUserId!,
+				getRequiredTestUserId(),
 				{
 					mood: 2,
 					note: "Updated note",
@@ -257,7 +264,7 @@ describe("checkin.repository integration", () => {
 
 			expect(updateResult.count).toBe(1);
 			const updated = await findCheckinByUserIdAndLocalDate(
-				testUserId!,
+				getRequiredTestUserId(),
 				localDate,
 			);
 			expect(updated?.mood).toBe(2);
@@ -269,7 +276,7 @@ describe("checkin.repository integration", () => {
 		test("can update note to null", async () => {
 			const localDate = getTodayLocalDate();
 			const checkin = await createCheckin({
-				userId: testUserId!,
+				userId: getRequiredTestUserId(),
 				mood: 0,
 				energy: 3,
 				sleepDuration: 7,
@@ -284,12 +291,12 @@ describe("checkin.repository integration", () => {
 
 			const updateResult = await updateCheckinByIdForUser(
 				checkin.id,
-				testUserId!,
+				getRequiredTestUserId(),
 				{ note: null },
 			);
 			expect(updateResult.count).toBe(1);
 			const updated = await findCheckinByUserIdAndLocalDate(
-				testUserId!,
+				getRequiredTestUserId(),
 				localDate,
 			);
 			expect(updated?.note).toBeNull();

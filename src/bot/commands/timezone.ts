@@ -6,7 +6,21 @@ import type { BotContext } from "../context";
 
 const logger = createChildLogger("bot:timezone");
 
-const TIMEZONE_OPTIONS: Array<{ tz: string; labelKey: string }> = [
+type TimezoneLabelKey =
+	| "timezone_btn_moscow"
+	| "timezone_btn_kaliningrad"
+	| "timezone_btn_samara"
+	| "timezone_btn_yekaterinburg"
+	| "timezone_btn_novosibirsk"
+	| "timezone_btn_krasnoyarsk"
+	| "timezone_btn_vladivostok"
+	| "timezone_btn_kyiv"
+	| "timezone_btn_minsk"
+	| "timezone_btn_london"
+	| "timezone_btn_berlin"
+	| "timezone_btn_new_york";
+
+const TIMEZONE_OPTIONS: Array<{ tz: string; labelKey: TimezoneLabelKey }> = [
 	{ tz: "Europe/Moscow", labelKey: "timezone_btn_moscow" },
 	{ tz: "Europe/Kaliningrad", labelKey: "timezone_btn_kaliningrad" },
 	{ tz: "Europe/Samara", labelKey: "timezone_btn_samara" },
@@ -28,9 +42,8 @@ export function buildTimezoneKeyboard(
 	const keyboard = new InlineKeyboard();
 
 	for (const opt of TIMEZONE_OPTIONS) {
-		// biome-ignore lint/suspicious/noExplicitAny: i18n key is dynamic
 		keyboard
-			.text(t(opt.labelKey as any, locale, {}), `${callbackPrefix}${opt.tz}`)
+			.text(t(opt.labelKey, locale, {}), `${callbackPrefix}${opt.tz}`)
 			.row();
 	}
 
